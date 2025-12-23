@@ -855,13 +855,16 @@ function articlesInit() {
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
 
-      const hasToken = location.search.includes("utterances=");
-      const hasHash = location.hash.includes("#article/");
+      const hasArticleHash =
+        location.hash && location.hash.includes("#article/");
+      const hasUtterances =
+        location.search && location.search.includes("utterances=");
 
-      // 如果既没有 Token 也没有文章 Hash，才是纯列表页，此时才允许 displayAllArticles 更新 URL
-      const shouldUpdateUrl = !(hasToken || hasHash);
-
-      displayAllArticles(shouldUpdateUrl);
+      if (!hasArticleHash && !hasUtterances) {
+        displayAllArticles(true);
+      } else {
+        displayAllArticles(false);
+      }
 
       setupEventListeners();
       initScrollToTop();
@@ -901,36 +904,44 @@ function articlesInit() {
     if (oldIframe) oldIframe.remove();
   }
   //挂载Utterances
+  //挂载Utterances
   function mountUtterances(opts = {}) {
     const container = document.getElementById("utterances-container");
     if (!container) return;
-    const repo = opts.repo || "yourname/your-repo";
-    const issueTerm = opts.issueTerm || "pathname";
-    const theme =
-      opts.theme ||
-      (document.body.classList.contains("night-mode")
-        ? "github-dark"
-        : "github-light");
+
+    const repo = opts.repo || "FanRec/FanRec.github.io";
+
+    // 关键修改：改为 url 而不是 pathname
+    const issueTerm = "url";
+
+    // 根据夜间模式选择主题
+    const theme = document.body.classList.contains("night-mode")
+      ? "github-dark"
+      : "github-light";
+
     unmountUtterances();
-    if (
-      !location.search.includes("utterances=") &&
-      location.hash.includes("utterances=")
-    ) {
-      const utterancesMatch = location.hash.match(/\?utterances=[^&]+/);
-      if (utterancesMatch) {
-        const tokenQuery = utterancesMatch[0];
-        const newUrl = location.pathname + tokenQuery + location.hash;
-        history.replaceState(null, "", newUrl);
+
+    // 处理 hash 中的 utterances 参数（兼容旧链接）
+    if (location.hash.includes("utterances=")) {
+      const match = location.hash.match(/\?utterances=[^&]+/);
+      if (match) {
+        const tokenQuery = match[0];
+        history.replaceState(
+          null,
+          "",
+          location.pathname + tokenQuery + location.hash.split("?")[0]
+        );
       }
     }
+
     const script = document.createElement("script");
     script.src = "https://utteranc.es/client.js";
     script.async = true;
     script.crossOrigin = "anonymous";
     script.setAttribute("repo", repo);
-    script.setAttribute("issue-term", issueTerm);
+    script.setAttribute("issue-term", issueTerm); // 改为 url
     script.setAttribute("theme", theme);
-    script.async = true;
+    script.setAttribute("label", "blog-comment"); // 推荐加一个固定 label，避免冲突
     container.appendChild(script);
   }
   async function displayArticle(articleData, options = {}) {
@@ -966,7 +977,6 @@ function articlesInit() {
 
         if (pushHistory) {
           const slug = articleData.slug || generateSlug(articleData);
-          localStorage.setItem("last_viewed_slug", slug);
           window.__prevPathBeforeArticle =
             window.location.pathname +
             window.location.search +
@@ -980,7 +990,6 @@ function articlesInit() {
 
         mountUtterances({
           repo: "FanRec/FanRec.github.io",
-          issueTerm: "pathname",
         });
 
         mainArticleContent.classList.remove("hide");
@@ -990,93 +999,75 @@ function articlesInit() {
     }
   }
   function restoreFrom404Redirect() {
-    const search = location.search; // 拿到 ?utterances=xxx
-    const hash = location.hash; // 拿到 #...
+    if (!location.hash || location.hash.length <= 1) return;
 
-    // 逻辑 A：处理 Utterances 登录回调后 Hash 丢失的情况
-    // 如果没有 Hash 但有 utterances 参数，说明是从 GitHub 登录跳回来的
-    if ((!hash || hash.length <= 1) && search.includes("utterances=")) {
-      console.log("[restore] 登录回调检测，尝试从本地存储恢复文章路径...");
-      const savedSlug = localStorage.getItem("last_viewed_slug");
-      if (savedSlug) {
-        // 构造伪造的路径让后面的逻辑统一处理
-        const recoveredHash = "#/article/" + savedSlug;
-        processRestore(recoveredHash, search);
-        return;
+    // 尝试多次 decode，直到解成真正的路径
+    let raw = location.hash.slice(1);
+    let decoded = raw;
+    try {
+      // 最多 decode 3 次防止死循环
+      for (let i = 0; i < 3; i++) {
+        const d = decodeURIComponent(decoded);
+        if (d === decoded) break;
+        decoded = d;
       }
+    } catch (e) {
+      console.warn("restoreFrom404Redirect decode failed", e);
     }
 
-    // 逻辑 B：正常的 Hash 路由还原
-    if (hash && hash.length > 1) {
-      processRestore(hash, search);
-    }
+    console.log("[restoreFrom404Redirect] decoded =", decoded);
+    if (!decoded.startsWith("/")) return;
 
-    /**
-     * 内部核心处理函数
-     */
-    function processRestore(rawHash, currentSearch) {
-      let decoded = rawHash.slice(1);
+    // 延迟执行确保文章数据加载完成
+    setTimeout(() => {
       try {
-        // 递归 decode 处理 404.html 带来的多次转义
-        for (let i = 0; i < 3; i++) {
-          const d = decodeURIComponent(decoded);
-          if (d === decoded) break;
-          decoded = d;
+        const fake = new URL("https://example.com" + decoded);
+        const pathname = fake.pathname; // /article/Prim-Kruskal
+        const search = fake.search; // ?utterances=xxxx
+        const match = pathname.match(/^\/article\/(.+)$/);
+        if (!match) return;
+
+        const slug = decodeURIComponent(match[1]);
+        const article =
+          allArticlesData &&
+          allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
+        if (!article) {
+          console.log("[restore] article not found:", slug);
+          return;
         }
-      } catch (e) {
-        console.warn("Decode failed", e);
-      }
 
-      if (!decoded.startsWith("/")) return;
+        console.log("[restore] found article:", slug);
 
-      // 延迟执行确保 allArticlesData 已加载完毕
-      setTimeout(() => {
-        try {
-          const fakeUrl = new URL("https://example.com" + decoded);
-          const pathname = fakeUrl.pathname; // /article/slug
-          const match = pathname.match(/^\/article\/(.+)$/);
-          if (!match) return;
-
-          const slug = decodeURIComponent(match[1]);
-          const article =
-            allArticlesData &&
-            allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
-
-          if (!article) {
-            console.log("[restore] 未找到文章:", slug);
-            return;
-          }
-
-          // 核心：修正地址栏。将 ?utterances=... 移到 # 前面
-          // 变成 blog.html?utterances=xxx#article/slug
-          const finalUrl =
-            location.pathname +
-            currentSearch +
-            "#article/" +
-            encodeURIComponent(slug);
+        if (search && search.includes("utterances=") && !location.search) {
+          const newUrl =
+            location.pathname + search + "#article/" + encodeURIComponent(slug);
           history.replaceState(
             { view: "article", slug },
             article.title,
-            finalUrl
+            newUrl
           );
-
-          // 执行文章显示逻辑
-          displayArticle(article, { pushHistory: false });
-
-          // 如果有登录信息，确保评论组件加载
-          if (currentSearch.includes("utterances=")) {
-            setTimeout(() => {
-              mountUtterances({
-                repo: "FanRec/FanRec.github.io",
-                issueTerm: "pathname",
-              });
-            }, 500);
-          }
-        } catch (err) {
-          console.error("[restore] 执行失败:", err);
+        } else {
+          history.replaceState(
+            { view: "article", slug },
+            article.title,
+            "#article/" + encodeURIComponent(slug)
+          );
         }
-      }, 300);
-    }
+
+        displayArticle(article, { pushHistory: false });
+        if (search && search.includes("utterances=")) {
+          console.log("[restore] detected utterances param → remount comments");
+          setTimeout(() => {
+            unmountUtterances();
+            mountUtterances({
+              repo: "FanRec/FanRec.github.io",
+            });
+          }, 600);
+        }
+      } catch (err) {
+        console.error("[restoreFrom404Redirect] parse error:", err);
+      }
+    }, 300);
   }
 
   const backToListBtn = document.getElementById("back-to-list-btn");
