@@ -696,10 +696,7 @@ function articlesInit() {
     allArticleCards.forEach((card) => {
       card.style.display = "flex";
     });
-    if (updateHistory) {
-      const newUrl = location.pathname + location.search;
-      history.pushState(null, "", newUrl);
-    }
+    if (updateHistory) history.pushState(null, "", location.pathname);
   }
 
   /**
@@ -855,16 +852,10 @@ function articlesInit() {
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
 
-      const hasArticleHash =
-        location.hash && location.hash.includes("#article/");
-      const hasUtterances =
-        location.search && location.search.includes("utterances=");
-
-      if (!hasArticleHash && !hasUtterances) {
-        displayAllArticles(true);
-      } else {
-        displayAllArticles(false);
-      }
+      const hasRedirectHash = location.hash && location.hash.length > 1;
+      const hasSearchParam = location.search && location.search.length > 1;
+      const shouldUpdateUrl = !(hasRedirectHash || hasSearchParam);
+      displayAllArticles(shouldUpdateUrl);
 
       setupEventListeners();
       initScrollToTop();
