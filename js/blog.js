@@ -851,8 +851,12 @@ function articlesInit() {
       });
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
+
       const hasRedirectHash = location.hash && location.hash.length > 1;
-      displayAllArticles(!hasRedirectHash);
+      const hasSearchParam = location.search && location.search.length > 1;
+      const shouldUpdateUrl = !(hasRedirectHash || hasSearchParam);
+      displayAllArticles(shouldUpdateUrl);
+
       setupEventListeners();
       initScrollToTop();
     } catch (error) {
