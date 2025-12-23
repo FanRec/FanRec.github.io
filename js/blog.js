@@ -968,61 +968,69 @@ function articlesInit() {
   }
   function restoreFrom404Redirect() {
     if (!location.hash || location.hash.length <= 1) return;
-    const raw = location.hash.slice(1);
-    let decoded;
+
+    // 尝试多次 decode，直到解成真正的路径
+    let raw = location.hash.slice(1);
+    let decoded = raw;
     try {
-      decoded = decodeURIComponent(raw);
+      // 最多 decode 3 次防止死循环
+      for (let i = 0; i < 3; i++) {
+        const d = decodeURIComponent(decoded);
+        if (d === decoded) break;
+        decoded = d;
+      }
     } catch (e) {
       console.warn("restoreFrom404Redirect decode failed", e);
-      return;
     }
-    if (!decoded || !decoded.startsWith("/")) return;
 
     console.log("[restoreFrom404Redirect] decoded =", decoded);
+    if (!decoded.startsWith("/")) return;
 
-    try {
-      const fake = new URL("https://example.com" + decoded);
-      const pathname = fake.pathname; // /article/Prim-Kruskal
-      const search = fake.search; // ?utterances=xxxx
-      const match = pathname.match(/^\/article\/(.+)$/);
+    // 延迟执行确保文章数据加载完成
+    setTimeout(() => {
+      try {
+        const fake = new URL("https://example.com" + decoded);
+        const pathname = fake.pathname; // /article/Prim-Kruskal
+        const search = fake.search; // ?utterances=xxxx
+        const match = pathname.match(/^\/article\/(.+)$/);
+        if (!match) return;
 
-      if (match) {
         const slug = decodeURIComponent(match[1]);
         const article =
           allArticlesData &&
           allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
-        if (article) {
-          // 🚫 不再跳回 /html/blog.html，只更新当前状态
-          history.replaceState(
-            { view: "article", slug },
-            article.title,
-            "#article/" + encodeURIComponent(slug)
-          );
-
-          // 加载文章内容
-          displayArticle(article, { pushHistory: false });
-
-          // 如果原始请求中带有 ?utterances=xxx，则重新挂载评论（用 url 模式）
-          if (search && search.length > 1) {
-            console.log(
-              "[restoreFrom404Redirect] detected utterances query, remounting..."
-            );
-            setTimeout(() => {
-              unmountUtterances();
-              mountUtterances({
-                repo: "FanRec/FanRec.github.io",
-                issueTerm: "url", // 包含完整 query/hash
-              });
-            }, 300);
-          }
+        if (!article) {
+          console.log("[restore] article not found:", slug);
           return;
         }
-      }
-    } catch (e) {
-      console.warn("restoreFrom404Redirect parse error", e);
-    }
 
-    console.log("[restoreFrom404Redirect] no article found, stay on page");
+        console.log("[restore] found article:", slug);
+
+        // 不跳回 blog.html，只更新 hash
+        history.replaceState(
+          { view: "article", slug },
+          article.title,
+          "#article/" + encodeURIComponent(slug)
+        );
+
+        // 加载文章（不 push 历史）
+        displayArticle(article, { pushHistory: false });
+
+        // 如果带有 utterances 参数，则重新挂载评论
+        if (search && search.includes("utterances=")) {
+          console.log("[restore] detected utterances param → remount comments");
+          setTimeout(() => {
+            unmountUtterances();
+            mountUtterances({
+              repo: "FanRec/FanRec.github.io",
+              issueTerm: "url", // 用完整 URL 标识
+            });
+          }, 500);
+        }
+      } catch (err) {
+        console.error("[restoreFrom404Redirect] parse error:", err);
+      }
+    }, 300);
   }
 
   const backToListBtn = document.getElementById("back-to-list-btn");
@@ -1048,6 +1056,9 @@ function articlesInit() {
         return;
       }
     }
+
+    if (location.hash.startsWith("#article/")) return;
+
     mainArticleContent.classList.add("hide");
     setTimeout(() => {
       mainArticleContent.style.display = "none";
