@@ -943,6 +943,10 @@ function articlesInit() {
 
         if (pushHistory) {
           const slug = articleData.slug || generateSlug(articleData);
+          window.__prevPathBeforeArticle =
+            window.location.pathname +
+            window.location.search +
+            window.location.hash;
           history.pushState(
             { view: "article", slug },
             articleData.title,
@@ -964,6 +968,8 @@ function articlesInit() {
   const backToListBtn = document.getElementById("back-to-list-btn");
   if (backToListBtn) {
     backToListBtn.addEventListener("click", () => {
+      const prev = window.__prevPathBeforeArticle || "/";
+      history.pushState({ view: "list" }, "", prev);
       mainArticleContent.classList.add("hide");
       setTimeout(() => {
         mainArticleContent.style.display = "none";
