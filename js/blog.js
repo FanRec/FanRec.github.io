@@ -696,7 +696,7 @@ function articlesInit() {
     allArticleCards.forEach((card) => {
       card.style.display = "flex";
     });
-    if (updateHistory) history.pushState(null, "", location.pathname);
+    // if (updateHistory) history.pushState(null, "", location.pathname);
   }
 
   /**
@@ -866,7 +866,7 @@ function articlesInit() {
       articleListContainer.innerHTML =
         '<p style="color: red;">抱歉，文章列表加载失败。</p>';
     }
-    restoreFrom404Redirect();
+    // restoreFrom404Redirect();
   }
   const mainArticleList = document.querySelector(".main-article-list");
   const mainArticleContent = document.querySelector(".main-article-content");
@@ -972,111 +972,111 @@ function articlesInit() {
       console.error("加载文章失败:", error);
     }
   }
-  function restoreFrom404Redirect() {
-    if (!location.hash || location.hash.length <= 1) return;
+  // function restoreFrom404Redirect() {
+  //   if (!location.hash || location.hash.length <= 1) return;
 
-    // 尝试多次 decode，直到解成真正的路径
-    let raw = location.hash.slice(1);
-    let decoded = raw;
-    try {
-      // 最多 decode 3 次防止死循环
-      for (let i = 0; i < 3; i++) {
-        const d = decodeURIComponent(decoded);
-        if (d === decoded) break;
-        decoded = d;
-      }
-    } catch (e) {
-      console.warn("restoreFrom404Redirect decode failed", e);
-    }
+  //   // 尝试多次 decode，直到解成真正的路径
+  //   let raw = location.hash.slice(1);
+  //   let decoded = raw;
+  //   try {
+  //     // 最多 decode 3 次防止死循环
+  //     for (let i = 0; i < 3; i++) {
+  //       const d = decodeURIComponent(decoded);
+  //       if (d === decoded) break;
+  //       decoded = d;
+  //     }
+  //   } catch (e) {
+  //     console.warn("restoreFrom404Redirect decode failed", e);
+  //   }
 
-    console.log("[restoreFrom404Redirect] decoded =", decoded);
-    if (!decoded.startsWith("/")) return;
+  //   console.log("[restoreFrom404Redirect] decoded =", decoded);
+  //   if (!decoded.startsWith("/")) return;
 
-    // 延迟执行确保文章数据加载完成
-    setTimeout(() => {
-      try {
-        const fake = new URL("https://example.com" + decoded);
-        const pathname = fake.pathname; // /article/Prim-Kruskal
-        const search = fake.search; // ?utterances=xxxx
-        const match = pathname.match(/^\/article\/(.+)$/);
-        if (!match) return;
+  //   // 延迟执行确保文章数据加载完成
+  //   setTimeout(() => {
+  //     try {
+  //       const fake = new URL("https://example.com" + decoded);
+  //       const pathname = fake.pathname; // /article/Prim-Kruskal
+  //       const search = fake.search; // ?utterances=xxxx
+  //       const match = pathname.match(/^\/article\/(.+)$/);
+  //       if (!match) return;
 
-        const slug = decodeURIComponent(match[1]);
-        const article =
-          allArticlesData &&
-          allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
-        if (!article) {
-          console.log("[restore] article not found:", slug);
-          return;
-        }
+  //       const slug = decodeURIComponent(match[1]);
+  //       const article =
+  //         allArticlesData &&
+  //         allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
+  //       if (!article) {
+  //         console.log("[restore] article not found:", slug);
+  //         return;
+  //       }
 
-        console.log("[restore] found article:", slug);
+  //       console.log("[restore] found article:", slug);
 
-        let newUrlHash = "#article/" + encodeURIComponent(slug);
-        if (search) {
-          newUrlHash += search;
-        }
-        // 不跳回 blog.html，只更新 hash
-        history.replaceState(
-          { view: "article", slug },
-          article.title,
-          newUrlHash
-        );
+  //       let newUrlHash = "#article/" + encodeURIComponent(slug);
+  //       if (search) {
+  //         newUrlHash += search;
+  //       }
+  //       // 不跳回 blog.html，只更新 hash
+  //       history.replaceState(
+  //         { view: "article", slug },
+  //         article.title,
+  //         newUrlHash
+  //       );
 
-        // 加载文章（不 push 历史）
-        displayArticle(article, { pushHistory: false });
+  //       // 加载文章（不 push 历史）
+  //       displayArticle(article, { pushHistory: false });
 
-        // 如果带有 utterances 参数，则重新挂载评论
-        if (search && search.includes("utterances=")) {
-          console.log("[restore] detected utterances param → remount comments");
-          setTimeout(() => {
-            unmountUtterances();
-            mountUtterances({
-              repo: "FanRec/FanRec.github.io",
-              issueTerm: "url", // 用完整 URL 标识
-            });
-          }, 500);
-        }
-      } catch (err) {
-        console.error("[restoreFrom404Redirect] parse error:", err);
-      }
-    }, 300);
-  }
+  //       // 如果带有 utterances 参数，则重新挂载评论
+  //       if (search && search.includes("utterances=")) {
+  //         console.log("[restore] detected utterances param → remount comments");
+  //         setTimeout(() => {
+  //           unmountUtterances();
+  //           mountUtterances({
+  //             repo: "FanRec/FanRec.github.io",
+  //             issueTerm: "url", // 用完整 URL 标识
+  //           });
+  //         }, 500);
+  //       }
+  //     } catch (err) {
+  //       console.error("[restoreFrom404Redirect] parse error:", err);
+  //     }
+  //   }, 300);
+  // }
 
   const backToListBtn = document.getElementById("back-to-list-btn");
   if (backToListBtn) {
     backToListBtn.addEventListener("click", () => {
-      const prev = window.__prevPathBeforeArticle || "/";
-      history.pushState({ view: "list" }, "", prev);
+      // const prev = window.__prevPathBeforeArticle || "/";
+      // history.pushState({ view: "list" }, "", prev);
       mainArticleContent.classList.add("hide");
       setTimeout(() => {
         mainArticleContent.style.display = "none";
         mainArticleList.style.display = "flex";
         mainArticleList.classList.remove("hide");
-        unmountUtterances();
+        // unmountUtterances();
       }, 200);
     });
   }
-  window.addEventListener("popstate", (e) => {
-    const state = e.state;
-    if (state && state.view === "article" && state.slug) {
-      const article = allArticlesData.find((a) => a.slug === state.slug);
-      if (article) {
-        displayArticle(article, { pushHistory: false });
-        return;
-      }
-    }
+  // window.addEventListener("popstate", (e) => {
+  //   const state = e.state;
+  //   if (state && state.view === "article" && state.slug) {
+  //     const article = allArticlesData.find((a) => a.slug === state.slug);
+  //     if (article) {
+  //       displayArticle(article, { pushHistory: false });
+  //       return;
+  //     }
+  //   }
 
-    if (location.hash.startsWith("#article/")) return;
+  //   if (location.hash.startsWith("#article/")) return;
 
-    mainArticleContent.classList.add("hide");
-    setTimeout(() => {
-      mainArticleContent.style.display = "none";
-      mainArticleList.style.display = "flex";
-      mainArticleList.classList.remove("hide");
-      unmountUtterances();
-    }, 200);
-  });
+  //   mainArticleContent.classList.add("hide");
+  //   setTimeout(() => {
+  //     mainArticleContent.style.display = "none";
+  //     mainArticleList.style.display = "flex";
+  //     mainArticleList.classList.remove("hide");
+  //     unmountUtterances();
+  //   }, 200);
+  // });
   loadArticles();
 }
 
