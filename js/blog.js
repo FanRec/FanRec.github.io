@@ -851,12 +851,14 @@ function articlesInit() {
       });
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
-
       const hasRedirectHash = location.hash && location.hash.length > 1;
       const hasSearchParam = location.search && location.search.length > 1;
-      const shouldUpdateUrl = !(hasRedirectHash || hasSearchParam);
-      displayAllArticles(shouldUpdateUrl);
 
+      // 如果有特殊状态，传入 false，告诉 displayAllArticles 不要乱动地址栏
+      // 这样 restoreFrom404Redirect 才有机会读取到原始数据
+      const shouldUpdateUrl = !(hasRedirectHash || hasSearchParam);
+
+      displayAllArticles(shouldUpdateUrl);
       setupEventListeners();
       initScrollToTop();
     } catch (error) {
@@ -906,20 +908,6 @@ function articlesInit() {
         ? "github-dark"
         : "github-light");
     unmountUtterances();
-    if (
-      !location.search.includes("utterances=") &&
-      location.hash.includes("utterances=")
-    ) {
-      // 从 Hash 中提取 ?utterances=... 部分
-      const utterancesMatch = location.hash.match(/\?utterances=[^&]+/);
-      if (utterancesMatch) {
-        const tokenQuery = utterancesMatch[0];
-        // 临时将 Token 注入到 search 中，且不刷新页面
-        // 这样 Utterances 脚本运行的时候就能从 window.location.search 读到它
-        const newUrl = location.pathname + tokenQuery + location.hash;
-        history.replaceState(null, "", newUrl);
-      }
-    }
     const script = document.createElement("script");
     script.src = "https://utteranc.es/client.js";
     script.async = true;
