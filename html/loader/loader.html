@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading...</title>
+    <link type="text/css" rel="stylesheet" href="../../css/themtColor.css" />
+    <style>
+      body,
+      html {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        background-color: var(--theme-color, #cdb09c);
+        color: var(--theme-color-lighter, #ffdb9a);
+        overflow: hidden;
+      }
+
+      body > .loader {
+        width: 40px;
+        height: 20px;
+        --c: no-repeat
+          radial-gradient(
+            farthest-side,
+            var(--theme-color-lighter, #ffdb9a) 93%,
+            var(--theme-color-lighter, #ffdb9a)
+          );
+        background: var(--c) 0 0, var(--c) 50% 0;
+        background-size: 8px 8px;
+        position: relative;
+        clip-path: inset(-200% -100% 0 0);
+        animation: l0 1.5s linear infinite;
+
+        transform: scale(2);
+      }
+      body > .loader::before {
+        content: "";
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--theme-color-lighter, #ffdb9a);
+        left: -16px;
+        top: 0;
+        animation: l1 1.5s linear infinite,
+          l2 0.5s cubic-bezier(0, 200, 0.8, 200) infinite;
+      }
+      body > .loader::after {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto auto;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--theme-color-lighter, #ffdb9a);
+        animation: l3 1.5s linear infinite;
+      }
+      @keyframes l0 {
+        0%,
+        30% {
+          background-position: 0 0, 50% 0;
+        }
+        33% {
+          background-position: 0 100%, 50%, 0;
+        }
+        41%,
+        63% {
+          background-position: 0 0, 50% 0;
+        }
+        66% {
+          background-position: 0 0, 50% 100%;
+        }
+        74%,
+        100% {
+          background-position: 0 0, 50% 0;
+        }
+      }
+      @keyframes l1 {
+        90% {
+          transform: translateY(0);
+        }
+        95% {
+          transform: translateY(15px);
+        }
+        100% {
+          transform: translateY(15px);
+          left: calc(100% - 8px);
+        }
+      }
+      @keyframes l2 {
+        100% {
+          top: -0.1px;
+        }
+      }
+      @keyframes l3 {
+        0%,
+        80%,
+        100% {
+          transform: translate(0);
+        }
+        90% {
+          transform: translate(26px);
+        }
+      }
+      .tips > .loader {
+        width: 40px;
+        aspect-ratio: 1;
+        color: var(--theme-color-lighter, #ffdb9a);
+        /* border-radius: 50%; */
+        display: grid;
+        background: radial-gradient(
+            farthest-side,
+            currentColor 6px,
+            #00000000 7px calc(100% - 6px),
+            currentColor calc(100% - 5px)
+          )
+          no-repeat;
+        animation: l4 2s linear infinite;
+        position: relative;
+        transform: scale(0.7);
+      }
+      .tips > .loader::before {
+        content: "";
+        border-radius: inherit;
+        background: inherit;
+        transform: rotate(45deg);
+      }
+      @keyframes l4 {
+        to {
+          transform: rotate(0.5turn) scale(0.7);
+        }
+      }
+      .tips {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        bottom: 26px;
+      }
+      .tips > .loader {
+        margin-right: 8px;
+      }
+      .tips > .text-info {
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+      }
+      .tips > .text-info > .loading {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader"></div>
+
+    <div class="tips">
+      <div class="loader"></div>
+      <div class="text-info">
+        <span class="loading">Loading...</span>
+        <span>Welcome to my website!</span>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>冰窟 | Blog</title>
+    <meta name="description" content="Content Info" />
+    <script src="../js/saveload.js"></script>
+    <link type="text/css" rel="stylesheet" href="../css/loaders.css" />
+    <iframe id="global-loader-iframe" src="./loader/loader.html"></iframe>
+    <link
+      id="hljs-theme"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="../css/blog.css" />
+    <script type="module" src="../js/blog.js"></script>
+  </head>
+  <body class="night-mode">
+    <button class="scroll-to-top-btn" id="scroll-to-top-btn" title="回到顶部">
+      <svg
+        t="1762992449206"
+        class="icon"
+        viewBox="0 0 1024 1024"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        p-id="2602"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        width="16"
+        height="16"
+      >
+        <path
+          d="M866.7 96H157.3c-17.8 0-32.2 14.4-32.2 32.2 0 17.8 14.4 32.2 32.2 32.2h709.5c17.8 0 32.2-14.4 32.2-32.2 0-17.8-14.4-32.2-32.3-32.2zM512 225c-16.5 0-33 6.3-45.6 18.9L169.9 540.3c-5.8 5.8-9.4 13.9-9.4 22.8s3.6 17 9.4 22.8c5.8 5.8 13.9 9.4 22.8 9.4s17-3.6 22.8-9.4l264.2-264.2v574c0 17.8 14.4 32.2 32.2 32.2 17.8 0 32.2-14.4 32.2-32.2v-574l264.2 264.2c5.8 5.8 13.9 9.4 22.8 9.4s17-3.6 22.8-9.4c5.8-5.8 9.4-13.9 9.4-22.8s-3.6-17-9.4-22.8L557.6 243.9C545 231.3 528.5 225 512 225z"
+          fill="#ffffff"
+          p-id="2603"
+        ></path>
+      </svg>
+    </button>
+    <nav class="header-nav">
+      <div class="header-nav-container">
+        <div class="navTitle"><strong>冰窟</strong>|MY PROFILE</div>
+        <div class="items">
+          <a href="../html/home.html">Home</a>
+          <a href="../html/album.html">Album</a>
+          <a href="../html/blog.html">Blog</a>
+          <a href="../html/beta.html">Beta</a>
+        </div>
+        <div class="nav-right-group">
+          <div class="search-box">
+            <svg
+              class="search-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+
+            <input
+              class="search-input"
+              id="search-input"
+              type="search"
+              placeholder="搜索"
+            />
+          </div>
+          <div class="theme-switcher-wrapper">
+            <svg
+              t="1762835908788"
+              class="nav-icon"
+              id="theme-toggle-button"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="4662"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="16"
+              height="16"
+            >
+              <path
+                d="M643.108548 604.058672C664.538627 792.804431 385.71634 848.578712 299.919279 857.155041c12.874215-132.996037-4.297886-356.063485 205.897394-356.063485-21.430078-12.873192 34.322713-137.250944 90.073458-201.599508C668.836513-43.697221 394.29267 63.549362 274.171871 110.725824c-501.910201 368.915188-154.442488 750.724033-137.272433 772.155135 373.33587 346.992899 796.61113-222.422765 677.803233-403.240971C801.788547 487.390509 694.562431 599.761809 643.108548 604.058672zM432.892803 166.499082c44.432978 0 80.430844 36.016285 80.430844 80.428797 0 44.432978-35.997865 80.431867-80.430844 80.431867-44.430932 0-80.429821-35.997865-80.429821-80.431867C352.462982 202.515367 388.461871 166.499082 432.892803 166.499082zM175.500595 713.444988c-44.411489 0-80.429821-36.015262-80.429821-80.427774 0-44.434002 36.017308-80.431867 80.429821-80.431867 44.432978 0 80.429821 35.997865 80.429821 80.431867C255.930415 677.428703 219.934596 713.444988 175.500595 713.444988zM239.849158 477.502301c-44.411489 0-80.429821-35.997865-80.429821-80.429821 0-44.430932 36.018332-80.429821 80.429821-80.429821 44.432978 0 80.450287 35.998889 80.450287 80.429821C320.299445 441.504436 284.282137 477.502301 239.849158 477.502301zM629.508809 563.300386c121.552403-50.04172 393.230989-532.641109 393.230989-532.641109l-25.019837-21.449521c0 0-407.384337 354.240977-449.844382 494.973208C562.479183 514.225691 610.87031 552.643676 629.508809 563.300386zM547.303552 506.096547c0.178055-0.630357 0.379647-1.274016 0.573051-1.913583C542.874683 500.744655 541.826817 500.624928 547.303552 506.096547zM422.159344 570.443064c-60.757782 46.470381-42.899042 185.90199-75.063603 235.941664 67.919902-50.039673 168.023808-35.753295 221.635843-125.103276C586.61079 631.220289 554.446229 506.096547 422.159344 570.443064z"
+                fill="#ffffff"
+                p-id="4663"
+              ></path>
+            </svg>
+            <div class="theme-menu-dropdown" id="theme-menu">
+              <div class="picker-header">
+                <div class="picker-header-left">
+                  <span class="line"></span>
+                  <span class="title">主题色</span>
+                  <button class="reset-color-btn" id="reset-color-btn">
+                    <span>&#x21BB;</span>
+                  </button>
+                </div>
+                <div class="picker-header-right">
+                  <input
+                    type="number"
+                    class="hue-value"
+                    id="hue-value"
+                    min="0"
+                    max="360"
+                    value="207"
+                  />
+                </div>
+              </div>
+              <div class="slider-container">
+                <input
+                  type="range"
+                  class="hue-slider"
+                  id="hue-slider"
+                  min="0"
+                  max="360"
+                  value="207"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="bg-switcher-wrapper">
+            <svg
+              t="1762939223910"
+              class="nav-icon"
+              id="bg-toggle-button"
+              viewBox="0 0 1024 1024"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="2673"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="16"
+              height="16"
+            >
+              <path
+                d="M896 160H128v704h768z m-704 64h640v423.68L706.08 496l-157.12 157.12L352 358.24l-160 240z m0 576v-86.24l160-240 187.04 280.48L701.92 592 832 747.52V800z"
+                fill="#ffffff"
+                p-id="2674"
+              ></path>
+              <path
+                d="M672 448a96 96 0 1 0-96-96 96 96 0 0 0 96 96z m0-128a32 32 0 1 1-32 32 32 32 0 0 1 32-32z"
+                fill="#ffffff"
+                p-id="2675"
+              ></path>
+            </svg>
+            <div class="bg-menu-dropdown" id="bg-menu">
+              <div class="menu-item is-active" id="banner-bg">横幅壁纸</div>
+              <div class="menu-item" id="full-screen-bg">全屏壁纸</div>
+              <div class="menu-item" id="solid-color-bg">纯色壁纸</div>
+            </div>
+          </div>
+          <div class="light-switcher-wrapper">
+            <svg
+              t="1762939557790"
+              class="nav-icon"
+              id="light-toggle-button"
+              viewBox="0 0 1024 1024"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="5890"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="16"
+              height="16"
+            >
+              <path
+                d="M512.000213 733.353497c-122.06857 0-221.353283-99.284713-221.353283-221.353284S389.931643 290.64693 512.000213 290.64693 733.353497 389.931643 733.353497 512.000213 634.026117 733.353497 512.000213 733.353497z m0-357.373767A136.148482 136.148482 0 0 0 375.97973 512.000213 136.148482 136.148482 0 0 0 512.000213 648.020697 136.148482 136.148482 0 0 0 648.020697 512.000213 136.148482 136.148482 0 0 0 512.000213 375.97973zM554.666613 171.735673A42.154403 42.154403 0 0 1 512.000213 213.335413c-23.551853 0-42.6664-18.645217-42.6664-41.59974V41.603153A42.154403 42.154403 0 0 1 512.000213 0.003413c23.551853 0 42.6664 18.645217 42.6664 41.59974v130.13252zM554.666613 982.397273A42.154403 42.154403 0 0 1 512.000213 1023.997013c-23.594519 0-42.6664-18.687883-42.6664-41.59974v-130.175186A42.111737 42.111737 0 0 1 512.000213 810.665013c23.551853 0 42.6664 18.60255 42.6664 41.59974v130.13252zM171.735673 469.333813c22.954523 0 41.59974 19.114547 41.59974 42.6664 0 23.594519-18.645217 42.6664-41.59974 42.6664H41.603153A42.154403 42.154403 0 0 1 0.003413 512.000213c0-23.551853 18.645217-42.6664 41.59974-42.6664h130.13252zM982.397273 469.333813c22.954523 0 41.59974 19.114547 41.59974 42.6664 0 23.594519-18.687883 42.6664-41.59974 42.6664h-130.175186A42.111737 42.111737 0 0 1 810.665013 512.000213c0-23.551853 18.60255-42.6664 41.59974-42.6664h130.13252zM241.239239 722.430898a42.06907 42.06907 0 0 1 59.562294 0.767995 42.111737 42.111737 0 0 1 0.767996 59.562295l-92.031425 92.074091a42.154403 42.154403 0 0 1-59.562295-0.853328 42.154403 42.154403 0 0 1-0.767995-59.562294l92.031425-91.988759zM814.462323 149.207814a42.154403 42.154403 0 0 1 59.562294 0.767995 42.154403 42.154403 0 0 1 0.767996 59.562295l-92.031425 92.031425a42.06907 42.06907 0 0 1-59.562295-0.767996 42.111737 42.111737 0 0 1-0.810661-59.562294l92.074091-92.031425zM241.239239 301.526862a42.19707 42.19707 0 0 0 59.604961-0.725329 42.111737 42.111737 0 0 0 0.767995-59.562294L209.538104 149.122481a42.154403 42.154403 0 0 0-59.562295 0.853328 42.111737 42.111737 0 0 0-0.767995 59.562295l92.031425 91.988758zM814.462323 874.792613a42.111737 42.111737 0 0 0 59.562294-0.810662 42.154403 42.154403 0 0 0 0.767996-59.562294l-92.031425-92.031425a42.06907 42.06907 0 0 0-59.562295 0.767995 42.111737 42.111737 0 0 0-0.810661 59.562294l92.074091 92.074092z"
+                fill="#ffffff"
+                p-id="5891"
+              ></path>
+            </svg>
+            <div class="light-menu-dropdown" id="light-menu">
+              <div class="menu-item" id="light-mode">亮色</div>
+              <div class="menu-item is-active" id="dark-mode">暗色</div>
+              <div class="menu-item" id="system-mode">跟随系统</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="banner-container">
+      <div class="banner-img"></div>
+      <div class="banner-title">小纪の博客</div>
+    </div>
+    <main>
+      <div class="main-content-wrapper">
+        <aside class="main-sidebar">
+          <div class="profile-card">
+            <div class="card-avatar"></div>
+            <div class="card-title">小 纪</div>
+            <div class="card-description">
+              A blog about web development and programming.
+            </div>
+            <div class="card-socials">
+              <a href="#" class="social-icon" name="github"></a>
+              <a href="#" class="social-icon" name="twitter"></a>
+              <a href="#" class="social-icon" name="csdn"></a>
+            </div>
+          </div>
+          <div class="category-tag-card">
+            <div class="categories-card">
+              <h3 class="card-title">Categories</h3>
+              <ul class="category-list">
+                <li>
+                  <span>Examples</span>
+                  <span class="badge">1</span>
+                </li>
+                <li>
+                  <span>Guides</span>
+                  <span class="badge">1</span>
+                </li>
+              </ul>
+            </div>
+            <div class="tags-card">
+              <h3 class="card-title">Tags</h3>
+              <div class="tag-cloud">
+                <a href="#">Demo</a>
+                <a href="#">Blogging</a>
+                <a href="#">Markdown</a>
+                <a href="#">html & css</a>
+                <a href="#">JavaScript</a>
+                <a href="#">C#</a>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="main-article-list">
+          <!-- <a
+            href="./articles/article.html#Module0"
+            target="_blank"
+            class="article-card"
+          >
+            <div class="card-info">
+              <h2 class="article-title">Introduction to the websites</h2>
+              <div class="article-meta">
+                <svg
+                  class="icon"
+                  viewBox="0 0 1024 1024"
+                  xmlns="http://www.w3.org/2000/svg"
+                  p-id="4658"
+                  data-spm-anchor-id="a313x.search_index.0.i1.510d3a81zqj0Yh"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  width="16"
+                  height="16"
+                >
+                  <path
+                    d="M917.333333 426.666667H106.666667v469.333333l477.738666 0.021334L917.333333 895.957333V426.666667z m0-64V170.666667C917.333333 170.666667 746.666667 170.666667 746.666667 170.666667V106.666667h170.666666A64 64 0 0 1 981.333333 170.666667v725.333333A64 64 0 0 1 917.333333 960H106.666667A64 64 0 0 1 42.666667 896V170.666667C42.666667 137.408 70.330667 106.666667 106.666667 106.666667H256v64l-149.333333 0.042667V362.666667h810.666666zM277.333333 64h64v213.333333h-64V64z m384 0h64v213.333333h-64V64zM362.666667 106.666667h341.333333v64H362.666667V106.666667z"
+                    fill="#ffffff"
+                    p-id="4659"
+                  ></path>
+                </svg>
+                <span>2025-10-30</span>
+                <svg
+                  class="icon"
+                  viewBox="0 0 1024 1024"
+                  xmlns="http://www.w3.org/2000/svg"
+                  p-id="6738"
+                  width="16"
+                  height="16"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <path
+                    d="M917.333333 0v774.592H247.082667c-42.218667 0-76.693333 32.149333-79.018667 71.637333l-0.149333 4.266667v35.626667c0 40 33.066667 73.557333 74.666666 75.818666l4.501334 0.128H917.333333V1024H247.082667C171.818667 1024 109.610667 965.12 106.773333 891.413333L106.666667 886.122667V173.504C106.666667 79.701333 183.253333 3.2 277.717333 0.106667L283.690667 0H917.333333z m-64 65.365333H285.504c-61.568 0-111.936 47.786667-114.709333 106.602667L170.666667 177.024 170.666667 740.757333l1.386666-0.917333a139.328 139.328 0 0 1 71.829334-23.104l5.333333-0.085333L853.333333 716.586667V65.365333z"
+                    fill="#111111"
+                    p-id="6739"
+                  ></path>
+                  <path
+                    d="M298.666667 43.584v718.976H234.666667V43.584h64zM917.333333 849.706667v65.365333H234.666667V849.706667h682.666666z"
+                    fill="#111111"
+                    p-id="6740"
+                  ></path>
+                </svg>
+                <span># Examples</span>
+
+                <svg
+                  t="1762823134087"
+                  class="icon"
+                  viewBox="0 0 1024 1024"
+                  xmlns="http://www.w3.org/2000/svg"
+                  p-id="9596"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  width="16"
+                  height="16"
+                >
+                  <path
+                    d="M128 341.333333m42.666667 0l682.666666 0q42.666667 0 42.666667 42.666667l0 0q0 42.666667-42.666667 42.666667l-682.666666 0q-42.666667 0-42.666667-42.666667l0 0q0-42.666667 42.666667-42.666667Z"
+                    fill="#ffffff"
+                    p-id="9597"
+                  ></path>
+                  <path
+                    d="M422.613333 85.333333H426.666667a38.613333 38.613333 0 0 1 38.4 42.453334L387.84 900.266667a42.666667 42.666667 0 0 1-42.453333 38.4H341.333333a38.613333 38.613333 0 0 1-38.4-42.453334L380.16 123.733333a42.666667 42.666667 0 0 1 42.453333-38.4zM678.613333 85.333333H682.666667a38.613333 38.613333 0 0 1 38.4 42.453334L643.84 900.266667a42.666667 42.666667 0 0 1-42.453333 38.4H597.333333a38.613333 38.613333 0 0 1-38.4-42.453334L636.16 123.733333a42.666667 42.666667 0 0 1 42.453333-38.4z"
+                    fill="#ffffff"
+                    p-id="9598"
+                  ></path>
+                  <path
+                    d="M128 597.333333m42.666667 0l682.666666 0q42.666667 0 42.666667 42.666667l0 0q0 42.666667-42.666667 42.666667l-682.666666 0q-42.666667 0-42.666667-42.666667l0 0q0-42.666667 42.666667-42.666667Z"
+                    fill="#ffffff"
+                    p-id="9599"
+                  ></path>
+                </svg>
+                <span class="tags">
+                  <span>Demo</span>
+                  <span>/</span>
+                  <span>Blogging</span>
+                </span>
+              </div>
+              <p class="article-summary">Read more about the websites</p>
+              <div class="article-stats">
+                <span>xxx words</span> <span>|</span> <span>x minutes</span>
+              </div>
+            </div>
+            <div class="card-arrow">&gt;</div>
+          </a> -->
+        </section>
+        <section class="main-article-content hide">
+          <div class="btn-wrapper">
+            <button id="back-to-list-btn" class="back-btn">&#x27A4;</button>
+          </div>
+          <h1 id="article-content-title" class="article-content-title">标题</h1>
+          <hr />
+          <div id="article-content" class="article-content"></div>
+        </section>
+      </div>
+    </main>
+    <script>
+      document.body.style.overflow = "hidden";
+      const minimumLoadingTime = 1800;
+      const startTime = new Date().getTime();
+
+      window.addEventListener("load", () => {
+        const currentTime = new Date().getTime();
+        const elapsedTime = currentTime - startTime;
+
+        const delay = Math.max(0, minimumLoadingTime - elapsedTime);
+        setTimeout(() => {
+          document.getElementById("global-loader-iframe").className = "end";
+          document.body.style.overflow = "unset";
+        }, delay);
+      });
+    </script>
+  </body>
+</html>

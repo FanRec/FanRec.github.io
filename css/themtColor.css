@@ -1,0 +1,11 @@
+:root {
+  --hue: 207;
+  --theme-color: hsl(var(--hue), 83%, 64%);
+  --theme-color-light: hsl(var(--hue), 83%, 72%);
+  --theme-color-lighter: hsl(var(--hue), 67%, 85%);
+  --theme-color-dark: hsl(var(--hue), 83%, 42%);
+  --theme-complementary-color: hsl(calc(var(--hue) + 120), 83%, 64%);
+  --theme-complementary-color-light: hsl(calc(var(--hue) + 120), 83%, 72%);
+  --theme-complementary-color-dark: hsl(calc(var(--hue) + 120), 83%, 42%);
+  --theme-complementary-color-lighter: hsl(calc(var(--hue) + 120), 67%, 85%);
+}
