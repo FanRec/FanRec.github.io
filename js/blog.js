@@ -855,16 +855,13 @@ function articlesInit() {
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
 
-      const hasArticleHash =
-        location.hash && location.hash.includes("#article/");
-      const hasUtterances =
-        location.search && location.search.includes("utterances=");
+      const hasToken = location.search.includes("utterances=");
+      const hasHash = location.hash.includes("#article/");
 
-      if (!hasArticleHash && !hasUtterances) {
-        displayAllArticles(true);
-      } else {
-        displayAllArticles(false);
-      }
+      // 如果既没有 Token 也没有文章 Hash，才是纯列表页，此时才允许 displayAllArticles 更新 URL
+      const shouldUpdateUrl = !(hasToken || hasHash);
+
+      displayAllArticles(shouldUpdateUrl);
 
       setupEventListeners();
       initScrollToTop();
@@ -969,6 +966,7 @@ function articlesInit() {
 
         if (pushHistory) {
           const slug = articleData.slug || generateSlug(articleData);
+          localStorage.setItem("last_viewed_slug", slug);
           window.__prevPathBeforeArticle =
             window.location.pathname +
             window.location.search +
@@ -992,59 +990,93 @@ function articlesInit() {
     }
   }
   function restoreFrom404Redirect() {
-    // 1. 获取当前的状态信息
-    let search = location.search; // 例如 ?utterances=xxx
-    let hash = location.hash; // 例如 #article/xxx
+    const search = location.search; // 拿到 ?utterances=xxx
+    const hash = location.hash; // 拿到 #...
 
-    // 2. 特殊逻辑：如果是 Utterances 登录回调（只有 search 没有正确 hash）
-    // 尝试从 window.__prevPathBeforeArticle 或 localStorage 恢复之前的文章路径
-    // 如果没有记录，通常 Utterances 会在 redirect_uri 中带回状态，
-    // 但最稳妥的办法是检测到 utterances 参数时，确保不破坏当前的路由展示。
-
-    if (!hash || hash.length <= 1) {
-      // 如果没有 hash 但有 utterances，说明是登录回调回到了列表页
-      // 此时由于 displayAllArticles(false) 被调用，Token 会被保留
-      // 评论脚本加载后会自动识别 location.search 完成登录
-      return;
+    // 逻辑 A：处理 Utterances 登录回调后 Hash 丢失的情况
+    // 如果没有 Hash 但有 utterances 参数，说明是从 GitHub 登录跳回来的
+    if ((!hash || hash.length <= 1) && search.includes("utterances=")) {
+      console.log("[restore] 登录回调检测，尝试从本地存储恢复文章路径...");
+      const savedSlug = localStorage.getItem("last_viewed_slug");
+      if (savedSlug) {
+        // 构造伪造的路径让后面的逻辑统一处理
+        const recoveredHash = "#/article/" + savedSlug;
+        processRestore(recoveredHash, search);
+        return;
+      }
     }
 
-    // --- 以下是原本处理 #/article/... 还原的逻辑 ---
-    let decoded = hash.slice(1);
-    try {
-      for (let i = 0; i < 3; i++) {
-        const d = decodeURIComponent(decoded);
-        if (d === decoded) break;
-        decoded = d;
-      }
-    } catch (e) {}
+    // 逻辑 B：正常的 Hash 路由还原
+    if (hash && hash.length > 1) {
+      processRestore(hash, search);
+    }
 
-    if (!decoded.startsWith("/")) return;
-
-    setTimeout(() => {
+    /**
+     * 内部核心处理函数
+     */
+    function processRestore(rawHash, currentSearch) {
+      let decoded = rawHash.slice(1);
       try {
-        const fake = new URL("https://example.com" + decoded);
-        const pathname = fake.pathname;
-        const match = pathname.match(/^\/article\/(.+)$/);
-        if (!match) return;
-
-        const slug = decodeURIComponent(match[1]);
-        const article = allArticlesData.find(
-          (a) => (a.slug || generateSlug(a)) === slug
-        );
-        if (!article) return;
-
-        // 还原 URL 时把 search (Token) 和 hash 拼在一起
-        history.replaceState(
-          { view: "article", slug },
-          article.title,
-          location.pathname + search + "#article/" + encodeURIComponent(slug)
-        );
-
-        displayArticle(article, { pushHistory: false });
-      } catch (err) {
-        console.error(err);
+        // 递归 decode 处理 404.html 带来的多次转义
+        for (let i = 0; i < 3; i++) {
+          const d = decodeURIComponent(decoded);
+          if (d === decoded) break;
+          decoded = d;
+        }
+      } catch (e) {
+        console.warn("Decode failed", e);
       }
-    }, 300);
+
+      if (!decoded.startsWith("/")) return;
+
+      // 延迟执行确保 allArticlesData 已加载完毕
+      setTimeout(() => {
+        try {
+          const fakeUrl = new URL("https://example.com" + decoded);
+          const pathname = fakeUrl.pathname; // /article/slug
+          const match = pathname.match(/^\/article\/(.+)$/);
+          if (!match) return;
+
+          const slug = decodeURIComponent(match[1]);
+          const article =
+            allArticlesData &&
+            allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
+
+          if (!article) {
+            console.log("[restore] 未找到文章:", slug);
+            return;
+          }
+
+          // 核心：修正地址栏。将 ?utterances=... 移到 # 前面
+          // 变成 blog.html?utterances=xxx#article/slug
+          const finalUrl =
+            location.pathname +
+            currentSearch +
+            "#article/" +
+            encodeURIComponent(slug);
+          history.replaceState(
+            { view: "article", slug },
+            article.title,
+            finalUrl
+          );
+
+          // 执行文章显示逻辑
+          displayArticle(article, { pushHistory: false });
+
+          // 如果有登录信息，确保评论组件加载
+          if (currentSearch.includes("utterances=")) {
+            setTimeout(() => {
+              mountUtterances({
+                repo: "FanRec/FanRec.github.io",
+                issueTerm: "pathname",
+              });
+            }, 500);
+          }
+        } catch (err) {
+          console.error("[restore] 执行失败:", err);
+        }
+      }, 300);
+    }
   }
 
   const backToListBtn = document.getElementById("back-to-list-btn");
