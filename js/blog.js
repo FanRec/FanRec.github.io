@@ -948,18 +948,18 @@ function articlesInit() {
         articleContent.innerHTML = html;
         initCopyCodeButtons();
 
-        if (pushHistory) {
-          const slug = articleData.slug || generateSlug(articleData);
-          window.__prevPathBeforeArticle =
-            window.location.pathname +
-            window.location.search +
-            window.location.hash;
-          history.pushState(
-            { view: "article", slug },
-            articleData.title,
-            `/article/${encodeURIComponent(slug)}`
-          );
-        }
+        // if (pushHistory) {
+        //   const slug = articleData.slug || generateSlug(articleData);
+        //   window.__prevPathBeforeArticle =
+        //     window.location.pathname +
+        //     window.location.search +
+        //     window.location.hash;
+        //   history.pushState(
+        //     { view: "article", slug },
+        //     articleData.title,
+        //     `/article/${encodeURIComponent(slug)}`
+        //   );
+        // }
 
         mountUtterances({
           repo: "FanRec/FanRec.github.io",
