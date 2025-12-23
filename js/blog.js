@@ -802,6 +802,9 @@ function articlesInit() {
       articleDatas.forEach((articleData) => {
         if (!articleData.flag) articleData.flag = "none";
       });
+      articleDatas.forEach((a) => {
+        if (!a.slug) a.slug = generateSlug(a);
+      });
 
       //排序 置顶 > date倒序
       articleDatas.sort((a, b) => {
@@ -862,7 +865,53 @@ function articlesInit() {
   const mainArticleContent = document.querySelector(".main-article-content");
   const articleContent = document.getElementById("article-content");
   const articleTitle = document.getElementById("article-content-title");
-  async function displayArticle(articleData) {
+  //生成Slug
+  function generateSlug(articleData) {
+    let base =
+      articleData.slug ||
+      articleData.filePath ||
+      articleData.title ||
+      "article";
+    base = base.replace(/\.[^/.]+$/, "");
+    base = base.replace(/\\/g, "/").split("/").pop();
+    base = base
+      .toLowerCase()
+      .replace(/[^\w\u4e00-\u9fff-]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    return base || "article";
+  }
+  //卸载Utterances
+  function unmountUtterances() {
+    const container = document.getElementById("utterances-container");
+    if (!container) return;
+    container.innerHTML = "";
+    const oldIframe = container.querySelector("iframe");
+    if (oldIframe) oldIframe.remove();
+  }
+  //挂载Utterances
+  function mountUtterances(opts = {}) {
+    const container = document.getElementById("utterances-container");
+    if (!container) return;
+    const repo = opts.repo || "yourname/your-repo";
+    const issueTerm = opts.issueTerm || "pathname";
+    const theme =
+      opts.theme ||
+      (document.body.classList.contains("night-mode")
+        ? "github-dark"
+        : "github-light");
+    unmountUtterances();
+    const script = document.createElement("script");
+    script.src = "https://utteranc.es/client.js";
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    script.setAttribute("repo", repo);
+    script.setAttribute("issue-term", issueTerm);
+    script.setAttribute("theme", theme);
+    container.appendChild(script);
+  }
+  async function displayArticle(articleData, options = {}) {
+    const pushHistory = options.pushHistory !== false;
     try {
       const FilePath = `../assets/articles/markdown/${articleData.filePath}`;
 
@@ -891,6 +940,21 @@ function articlesInit() {
         articleTitle.textContent = articleData.title;
         articleContent.innerHTML = html;
         initCopyCodeButtons();
+
+        if (pushHistory) {
+          const slug = articleData.slug || generateSlug(articleData);
+          history.pushState(
+            { view: "article", slug },
+            articleData.title,
+            `/article/${encodeURIComponent(slug)}`
+          );
+        }
+
+        mountUtterances({
+          repo: "FanRec/FanRec.github.io",
+          issueTerm: "pathname",
+        });
+
         mainArticleContent.classList.remove("hide");
       }, 200);
     } catch (error) {
@@ -905,10 +969,27 @@ function articlesInit() {
         mainArticleContent.style.display = "none";
         mainArticleList.style.display = "flex";
         mainArticleList.classList.remove("hide");
+        unmountUtterances();
       }, 200);
     });
   }
-
+  window.addEventListener("popstate", (e) => {
+    const state = e.state;
+    if (state && state.view === "article" && state.slug) {
+      const article = allArticlesData.find((a) => a.slug === state.slug);
+      if (article) {
+        displayArticle(article, { pushHistory: false });
+        return;
+      }
+    }
+    mainArticleContent.classList.add("hide");
+    setTimeout(() => {
+      mainArticleContent.style.display = "none";
+      mainArticleList.style.display = "flex";
+      mainArticleList.classList.remove("hide");
+      unmountUtterances();
+    }, 200);
+  });
   loadArticles();
 }
 

@@ -9,7 +9,8 @@
     "tag": "Algorithm/Note/Graph",
     "words": "305",
     "readingTime": "10min",
-    "filePath": "最小生成树.md"
+    "filePath": "最小生成树.md",
+    "slug": "Prim-Kruskal"
   },
   {
     "id": "article-2",
@@ -21,7 +22,8 @@
     "tag": "ComputerOrganization/Note",
     "words": "13163",
     "readingTime": "30min",
-    "filePath": "ComputerOrganization.md"
+    "filePath": "ComputerOrganization.md",
+    "slug": "CONote"
   },
   {
     "id": "article-1",
@@ -33,6 +35,7 @@
     "tag": "None",
     "words": "0",
     "readingTime": "10",
-    "filePath": "README.md"
+    "filePath": "README.md",
+    "slug": "README"
   }
 ]
