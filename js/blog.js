@@ -904,44 +904,36 @@ function articlesInit() {
     if (oldIframe) oldIframe.remove();
   }
   //挂载Utterances
-  //挂载Utterances
   function mountUtterances(opts = {}) {
     const container = document.getElementById("utterances-container");
     if (!container) return;
-
-    const repo = opts.repo || "FanRec/FanRec.github.io";
-
-    // 关键修改：改为 url 而不是 pathname
-    const issueTerm = "url";
-
-    // 根据夜间模式选择主题
-    const theme = document.body.classList.contains("night-mode")
-      ? "github-dark"
-      : "github-light";
-
+    const repo = opts.repo || "yourname/your-repo";
+    const issueTerm = opts.issueTerm || "pathname";
+    const theme =
+      opts.theme ||
+      (document.body.classList.contains("night-mode")
+        ? "github-dark"
+        : "github-light");
     unmountUtterances();
-
-    // 处理 hash 中的 utterances 参数（兼容旧链接）
-    if (location.hash.includes("utterances=")) {
-      const match = location.hash.match(/\?utterances=[^&]+/);
-      if (match) {
-        const tokenQuery = match[0];
-        history.replaceState(
-          null,
-          "",
-          location.pathname + tokenQuery + location.hash.split("?")[0]
-        );
+    if (
+      !location.search.includes("utterances=") &&
+      location.hash.includes("utterances=")
+    ) {
+      const utterancesMatch = location.hash.match(/\?utterances=[^&]+/);
+      if (utterancesMatch) {
+        const tokenQuery = utterancesMatch[0];
+        const newUrl = location.pathname + tokenQuery + location.hash;
+        history.replaceState(null, "", newUrl);
       }
     }
-
     const script = document.createElement("script");
     script.src = "https://utteranc.es/client.js";
     script.async = true;
     script.crossOrigin = "anonymous";
     script.setAttribute("repo", repo);
-    script.setAttribute("issue-term", issueTerm); // 改为 url
+    script.setAttribute("issue-term", issueTerm);
     script.setAttribute("theme", theme);
-    script.setAttribute("label", "blog-comment"); // 推荐加一个固定 label，避免冲突
+    script.async = true;
     container.appendChild(script);
   }
   async function displayArticle(articleData, options = {}) {
@@ -990,6 +982,7 @@ function articlesInit() {
 
         mountUtterances({
           repo: "FanRec/FanRec.github.io",
+          issueTerm: "pathname",
         });
 
         mainArticleContent.classList.remove("hide");
@@ -1061,6 +1054,7 @@ function articlesInit() {
             unmountUtterances();
             mountUtterances({
               repo: "FanRec/FanRec.github.io",
+              issueTerm: "pathname",
             });
           }, 600);
         }
