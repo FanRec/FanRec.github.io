@@ -692,11 +692,11 @@ function articlesInit() {
   /**
    * 显示所有文章卡片
    */
-  function displayAllArticles() {
+  function displayAllArticles(updateHistory = true) {
     allArticleCards.forEach((card) => {
       card.style.display = "flex";
     });
-    history.pushState(null, "", location.pathname);
+    if (updateHistory) history.pushState(null, "", location.pathname);
   }
 
   /**
@@ -851,8 +851,8 @@ function articlesInit() {
       });
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
-
-      displayAllArticles();
+      const hasRedirectHash = location.hash && location.hash.length > 1;
+      displayAllArticles(!hasRedirectHash);
       setupEventListeners();
       initScrollToTop();
     } catch (error) {
@@ -1006,11 +1006,15 @@ function articlesInit() {
 
         console.log("[restore] found article:", slug);
 
+        let newUrlHash = "#article/" + encodeURIComponent(slug);
+        if (search) {
+          newUrlHash += search;
+        }
         // 不跳回 blog.html，只更新 hash
         history.replaceState(
           { view: "article", slug },
           article.title,
-          "#article/" + encodeURIComponent(slug)
+          newUrlHash
         );
 
         // 加载文章（不 push 历史）
