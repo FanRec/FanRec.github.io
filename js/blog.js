@@ -860,6 +860,7 @@ function articlesInit() {
       articleListContainer.innerHTML =
         '<p style="color: red;">抱歉，文章列表加载失败。</p>';
     }
+    restoreFrom404Redirect();
   }
   const mainArticleList = document.querySelector(".main-article-list");
   const mainArticleContent = document.querySelector(".main-article-content");
@@ -965,6 +966,71 @@ function articlesInit() {
       console.error("加载文章失败:", error);
     }
   }
+  // 恢复 404.html 带回来的原始请求并渲染文章（放在 articles 加载完之后执行）
+  function restoreFrom404Redirect() {
+    if (!location.hash || location.hash.length <= 1) return;
+    // 去掉 leading '#'
+    const raw = location.hash.slice(1);
+    let decoded;
+    try {
+      decoded = decodeURIComponent(raw);
+    } catch (e) {
+      console.warn("restoreFrom404Redirect decode failed", e);
+      return;
+    }
+    // decoded 形如 "/article/Prim-Kruskal?utterances=xxxxx" 或其他路径
+    if (!decoded || !decoded.startsWith("/")) return;
+
+    // 解析 pathname 和 query
+    const url = new URL("https://example.com" + decoded); // 仅用于解析，不用于网络请求
+    const pathname = url.pathname; // e.g. /article/Prim-Kruskal
+    const search = url.search; // e.g. ?utterances=...
+
+    // 若是文章路由，解析 slug 并显示文章（不再 pushHistory）
+    const match = pathname.match(/^\/article\/(.+)$/);
+    if (match) {
+      const slug = decodeURIComponent(match[1]);
+      // 找到对应文章（确保 allArticlesData 已就绪）
+      const article =
+        allArticlesData &&
+        allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
+      if (article) {
+        // 先把地址栏恢复为 SPA 入口 + #article/<slug> 格式（可选）
+        history.replaceState(
+          { view: "article", slug },
+          article.title,
+          "/html/blog.html#article/" + encodeURIComponent(slug)
+        );
+        // 渲染文章，但不要 push history（避免重复）
+        displayArticle(article, { pushHistory: false });
+
+        // 重要：如果 URL 带有 utterances 的查询（OAuth 授权回调），
+        // 需要把查询附加到当前 location（Utterances 可能需要这个参数）
+        if (search) {
+          // 将 search 放到 location.search（浏览器不允许直接设置 search），
+          // 我们把它放到 hash 的另一段或直接 re-mount utterances 并带上 issue-term/url
+          // 最稳妥：直接重新挂载 utterances（mountUtterances 会读取当前 location）
+          // 确保 unmount 旧的，再 mount。
+          setTimeout(() => {
+            // use url-based issue-term so Utterances 能识别 hash + query 组合
+            unmountUtterances();
+            mountUtterances({
+              repo: "FanRec/FanRec.github.io", // <-- 改成你的 repo
+              issueTerm: "url",
+              theme: document.body.classList.contains("night-mode")
+                ? "github-dark"
+                : "github-light",
+            });
+          }, 100);
+        }
+        return;
+      }
+    }
+
+    // 如果不是文章路由或没找到文章，可以把用户导向列表页
+    // history.replaceState({}, '', '/html/blog.html');
+  }
+
   const backToListBtn = document.getElementById("back-to-list-btn");
   if (backToListBtn) {
     backToListBtn.addEventListener("click", () => {

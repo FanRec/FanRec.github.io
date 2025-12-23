@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <script>
+      (function () {
+        // 把原始请求的 pathname + search + hash 合成一个字符串，然后 encodeURIComponent 带回 SPA
+        var original = location.pathname + location.search + location.hash;
+        // 将原始路径编码后作为 hash 传给 SPA 页面（把 SPA 入口改成你实际的路径）
+        // 如果你的 SPA 入口是 /html/blog.html，保留下面的路径；若入口是 /index.html 或 /，请改为 '/'
+        var spaEntry = "/html/blog.html";
+        var target = spaEntry + "#" + encodeURIComponent(original);
+        location.replace(target);
+      })();
+    </script>
+  </head>
+  <body>
+    Redirecting…
+  </body>
+</html>
