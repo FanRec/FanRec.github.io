@@ -696,7 +696,10 @@ function articlesInit() {
     allArticleCards.forEach((card) => {
       card.style.display = "flex";
     });
-    if (updateHistory) history.pushState(null, "", location.pathname);
+    if (updateHistory) {
+      const newUrl = location.pathname + location.search;
+      history.pushState(null, "", newUrl);
+    }
   }
 
   /**
@@ -852,10 +855,16 @@ function articlesInit() {
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
 
-      const hasRedirectHash = location.hash && location.hash.length > 1;
-      const hasSearchParam = location.search && location.search.length > 1;
-      const shouldUpdateUrl = !(hasRedirectHash || hasSearchParam);
-      displayAllArticles(shouldUpdateUrl);
+      const hasArticleHash =
+        location.hash && location.hash.includes("#article/");
+      const hasUtterances =
+        location.search && location.search.includes("utterances=");
+
+      if (!hasArticleHash && !hasUtterances) {
+        displayAllArticles(true);
+      } else {
+        displayAllArticles(false);
+      }
 
       setupEventListeners();
       initScrollToTop();
@@ -982,62 +991,59 @@ function articlesInit() {
       console.error("加载文章失败:", error);
     }
   }
-  function restoreFrom404Redirect() {
-    if (!location.hash || location.hash.length <= 1) return;
+function restoreFrom404Redirect() {
+    // 1. 获取当前的状态信息
+    let search = location.search; // 例如 ?utterances=xxx
+    let hash = location.hash;     // 例如 #article/xxx
 
-    // 尝试多次 decode，直到解成真正的路径
-    let raw = location.hash.slice(1);
-    let decoded = raw;
+    // 2. 特殊逻辑：如果是 Utterances 登录回调（只有 search 没有正确 hash）
+    // 尝试从 window.__prevPathBeforeArticle 或 localStorage 恢复之前的文章路径
+    // 如果没有记录，通常 Utterances 会在 redirect_uri 中带回状态，
+    // 但最稳妥的办法是检测到 utterances 参数时，确保不破坏当前的路由展示。
+
+    if (!hash || hash.length <= 1) {
+        // 如果没有 hash 但有 utterances，说明是登录回调回到了列表页
+        // 此时由于 displayAllArticles(false) 被调用，Token 会被保留
+        // 评论脚本加载后会自动识别 location.search 完成登录
+        return; 
+    }
+
+    // --- 以下是原本处理 #/article/... 还原的逻辑 ---
+    let decoded = hash.slice(1);
     try {
-      // 最多 decode 3 次防止死循环
       for (let i = 0; i < 3; i++) {
         const d = decodeURIComponent(decoded);
         if (d === decoded) break;
         decoded = d;
       }
-    } catch (e) {
-      console.warn("restoreFrom404Redirect decode failed", e);
-    }
+    } catch (e) {}
 
-    console.log("[restoreFrom404Redirect] decoded =", decoded);
     if (!decoded.startsWith("/")) return;
 
-    // 延迟执行确保文章数据加载完成
     setTimeout(() => {
       try {
         const fake = new URL("https://example.com" + decoded);
-        const pathname = fake.pathname; // /article/Prim-Kruskal
-        const search = fake.search; // ?utterances=xxxx
+        const pathname = fake.pathname;
         const match = pathname.match(/^\/article\/(.+)$/);
         if (!match) return;
 
         const slug = decodeURIComponent(match[1]);
-        const article =
-          allArticlesData &&
-          allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
-        if (!article) {
-          console.log("[restore] article not found:", slug);
-          return;
-        }
+        const article = allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
+        if (!article) return;
 
-        console.log("[restore] found article:", slug);
+        // 还原 URL 时把 search (Token) 和 hash 拼在一起
+        history.replaceState(
+          { view: "article", slug },
+          article.title,
+          location.pathname + search + "#article/" + encodeURIComponent(slug)
+        );
 
-        if (search && search.includes("utterances=") && !location.search) {
-          const newUrl =
-            location.pathname + search + "#article/" + encodeURIComponent(slug);
-          history.replaceState(
-            { view: "article", slug },
-            article.title,
-            newUrl
-          );
-        } else {
-          history.replaceState(
-            { view: "article", slug },
-            article.title,
-            "#article/" + encodeURIComponent(slug)
-          );
-        }
-
+        displayArticle(article, { pushHistory: false });
+      } catch (err) {
+        console.error(err);
+      }
+    }, 300);
+  }
         displayArticle(article, { pushHistory: false });
         if (search && search.includes("utterances=")) {
           console.log("[restore] detected utterances param → remount comments");
