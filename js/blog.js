@@ -906,6 +906,17 @@ function articlesInit() {
         ? "github-dark"
         : "github-light");
     unmountUtterances();
+    if (
+      !location.search.includes("utterances=") &&
+      location.hash.includes("utterances=")
+    ) {
+      const utterancesMatch = location.hash.match(/\?utterances=[^&]+/);
+      if (utterancesMatch) {
+        const tokenQuery = utterancesMatch[0];
+        const newUrl = location.pathname + tokenQuery + location.hash;
+        history.replaceState(null, "", newUrl);
+      }
+    }
     const script = document.createElement("script");
     script.src = "https://utteranc.es/client.js";
     script.async = true;
@@ -913,6 +924,7 @@ function articlesInit() {
     script.setAttribute("repo", repo);
     script.setAttribute("issue-term", issueTerm);
     script.setAttribute("theme", theme);
+    script.async = true;
     container.appendChild(script);
   }
   async function displayArticle(articleData, options = {}) {
@@ -1010,30 +1022,32 @@ function articlesInit() {
 
         console.log("[restore] found article:", slug);
 
-        let newUrlHash = "#article/" + encodeURIComponent(slug);
-        if (search) {
-          newUrlHash += search;
+        if (search && search.includes("utterances=") && !location.search) {
+          const newUrl =
+            location.pathname + search + "#article/" + encodeURIComponent(slug);
+          history.replaceState(
+            { view: "article", slug },
+            article.title,
+            newUrl
+          );
+        } else {
+          history.replaceState(
+            { view: "article", slug },
+            article.title,
+            "#article/" + encodeURIComponent(slug)
+          );
         }
-        // 不跳回 blog.html，只更新 hash
-        history.replaceState(
-          { view: "article", slug },
-          article.title,
-          newUrlHash
-        );
 
-        // 加载文章（不 push 历史）
         displayArticle(article, { pushHistory: false });
-
-        // 如果带有 utterances 参数，则重新挂载评论
         if (search && search.includes("utterances=")) {
           console.log("[restore] detected utterances param → remount comments");
           setTimeout(() => {
             unmountUtterances();
             mountUtterances({
               repo: "FanRec/FanRec.github.io",
-              issueTerm: "url", // 用完整 URL 标识
+              issueTerm: "pathname",
             });
-          }, 500);
+          }, 600);
         }
       } catch (err) {
         console.error("[restoreFrom404Redirect] parse error:", err);
