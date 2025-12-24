@@ -117,6 +117,18 @@ function loadHighlightStyle(isNightMode) {
     styleLink.href = url;
   }
 }
+function updateUtterancesTheme(isLight) {
+  const theme = isLight ? "github-light" : "github-dark";
+  const message = {
+    type: "set-theme",
+    theme: theme,
+  };
+
+  const utterancesIframe = document.querySelector(".utterances iframe");
+  if (utterancesIframe && utterancesIframe.contentWindow) {
+    utterancesIframe.contentWindow.postMessage(message, "https://utteranc.es");
+  }
+}
 function initCopyCodeButtons() {
   const blocks = document.querySelectorAll("pre > code.hljs");
 
@@ -318,6 +330,7 @@ function initSettingsToggle() {
       }
       loadHighlightStyle(true);
     }
+    updateUtterancesTheme();
   }
   lightMode.addEventListener("click", (event) => {
     event.stopPropagation();
