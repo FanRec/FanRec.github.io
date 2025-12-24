@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +15,7 @@
         justify-content: center;
         height: 100vh;
         margin: 0;
+        text-align: center;
       }
       h1 {
         font-size: 4rem;
@@ -24,12 +25,18 @@
       p {
         font-size: 1.2rem;
         color: #aaa;
+        margin: 10px 0;
+      }
+      .target-text {
+        color: #64b5f6;
+        font-weight: bold;
       }
       a {
         color: #64b5f6;
         text-decoration: none;
         border-bottom: 1px solid transparent;
         transition: all 0.3s;
+        cursor: pointer;
       }
       a:hover {
         border-bottom-color: #64b5f6;
@@ -38,20 +45,58 @@
   </head>
   <body>
     <h1>404</h1>
-    <p>Ops! 冰窟里没有找到这个页面。</p>
-    <p><span id="countdown">3</span> 秒后自动返回博客...</p>
-    <p><a href="./html/blog.html">立即返回</a></p>
+    <p>Ops! 页面走丢了。</p>
+    <p>看来你想访问 <span id="page-name" class="target-text">首页</span>...</p>
+    <p><span id="countdown">3</span> 秒后自动跳转</p>
+    <p><a id="manual-link">立即跳转</a></p>
 
     <script>
+      // 定义网站的页面映射关系
+      // key: URL中包含的关键词
+      // value: { name: 显示的名称, path: 绝对路径 }
+      const routes = {
+        blog: { name: "博客 (Blog)", path: "/html/blog.html" },
+        album: { name: "相册 (Album)", path: "/html/album.html" },
+        beta: { name: "测试页 (Beta)", path: "/html/beta.html" },
+        home: { name: "主页 (Home)", path: "/html/home.html" },
+      };
+
+      // 默认跳转页面
+      let target = { name: "主页 (Home)", path: "/html/home.html" };
+
+      // 获取当前 URL 路径并转为小写
+      const currentPath = window.location.pathname.toLowerCase();
+
+      // 简单的关键词匹配逻辑
+      for (const key in routes) {
+        if (currentPath.includes(key)) {
+          target = routes[key];
+          break; // 找到第一个匹配项就停止
+        }
+      }
+
+      // 如果是在文章详情的 "伪" 路径下（比如 blog.html/some-article），
+      // 我们可能更希望它跳转回 blog.html 并尝试恢复文章（高级功能），
+      // 但现在基础版直接跳回 blog.html 列表页是安全的。
+
+      // 更新页面显示
+      document.getElementById("page-name").textContent = target.name;
+      const link = document.getElementById("manual-link");
+
+      // 注意：这里使用了 href 属性的直接赋值，建议保留 onclick 逻辑以防万一
+      link.href = target.path;
+
+      // 倒计时逻辑
       let seconds = 3;
       const el = document.getElementById("countdown");
+
       const timer = setInterval(() => {
         seconds--;
         el.textContent = seconds;
         if (seconds <= 0) {
           clearInterval(timer);
-          // 根据你的目录结构调整这里的跳转路径
-          window.location.href = "./html/blog.html";
+          // 核心修正：使用 target.path (以 / 开头的绝对路径)
+          window.location.replace(target.path);
         }
       }, 1000);
     </script>
