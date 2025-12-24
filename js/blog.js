@@ -117,16 +117,19 @@ function loadHighlightStyle(isNightMode) {
     styleLink.href = url;
   }
 }
-function updateUtterancesTheme(isLight) {
-  const theme = isLight ? "github-light" : "github-dark";
-  const message = {
-    type: "set-theme",
-    theme: theme,
-  };
+function updateUtterancesTheme() {
+  const isNight = document.body.classList.contains("night-mode");
+  const theme = isNight ? "github-dark" : "github-light";
 
-  const utterancesIframe = document.querySelector(".utterances iframe");
-  if (utterancesIframe && utterancesIframe.contentWindow) {
-    utterancesIframe.contentWindow.postMessage(message, "https://utteranc.es");
+  const iframe = document.querySelector("iframe.utterances-frame");
+
+  if (iframe && iframe.contentWindow) {
+    const message = {
+      type: "set-theme",
+      theme: theme,
+    };
+    // 向 utterances 发送跨域消息
+    iframe.contentWindow.postMessage(message, "https://utteranc.es");
   }
 }
 function initCopyCodeButtons() {
