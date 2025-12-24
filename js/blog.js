@@ -768,6 +768,10 @@ function articlesInit() {
       });
     }
   }
+  function getArticleFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("article");
+  }
   // 加载文章数据并生成卡片
   async function loadArticles() {
     try {
@@ -840,8 +844,7 @@ function articlesInit() {
       setupEventListeners();
       initScrollToTop();
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const currentSlug = urlParams.get("article");
+      const currentSlug = getArticleFromUrl();
       if (currentSlug) {
         const targetArticle = allArticlesData.find(
           (a) => a.slug === currentSlug
