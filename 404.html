@@ -1,22 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>Redirecting…</title>
-    <meta name="robots" content="noindex" />
-    <script>
-      (function () {
-        // 把原始请求的 pathname + search + hash 合成一个字符串，然后 encodeURIComponent 带回 SPA
-        var original = location.pathname + location.search + location.hash;
-        // 将原始路径编码后作为 hash 传给 SPA 页面（把 SPA 入口改成你实际的路径）
-        // 如果你的 SPA 入口是 /html/blog.html，保留下面的路径；若入口是 /index.html 或 /，请改为 '/'
-        var spaEntry = "/html/blog.html";
-        var target = spaEntry + "#" + encodeURIComponent(original);
-        location.replace(target);
-      })();
-    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found</title>
+    <style>
+      body {
+        background-color: #1a1a1a;
+        color: #fff;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      h1 {
+        font-size: 4rem;
+        margin-bottom: 0;
+        color: #64b5f6;
+      }
+      p {
+        font-size: 1.2rem;
+        color: #aaa;
+      }
+      a {
+        color: #64b5f6;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: all 0.3s;
+      }
+      a:hover {
+        border-bottom-color: #64b5f6;
+      }
+    </style>
   </head>
   <body>
-    Redirecting…
+    <h1>404</h1>
+    <p>Ops! 冰窟里没有找到这个页面。</p>
+    <p><span id="countdown">3</span> 秒后自动返回博客...</p>
+    <p><a href="./html/blog.html">立即返回</a></p>
+
+    <script>
+      let seconds = 3;
+      const el = document.getElementById("countdown");
+      const timer = setInterval(() => {
+        seconds--;
+        el.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          // 根据你的目录结构调整这里的跳转路径
+          window.location.href = "./html/blog.html";
+        }
+      }, 1000);
+    </script>
   </body>
 </html>

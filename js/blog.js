@@ -1,9 +1,8 @@
 import markdownit from "https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm";
-// 初始化 markdown-it 并配置 highlight.js
 const mdIt = markdownit({
-  html: true, // 允许源码中的 HTML 标签
-  linkify: true, // 自动识别 URL
-  typographer: true, // 优化排版
+  html: true,
+  linkify: true,
+  typographer: true,
   highlight: function (str, lang) {
     const validLang =
       lang && window.hljs && window.hljs.getLanguage(lang) ? lang : "";
@@ -17,7 +16,7 @@ const mdIt = markdownit({
     return `<pre><code class="hljs" data-lang="${validLang}">${highlighted}</code></pre>`;
   },
 });
-/* --- Markdown-it 插件：识别 > [!TIP] / [!NOTE] / [!IMPORTANT] / [!WARNING] / [!CAUTION] --- */
+/* 识别 > [!TIP] / [!NOTE] / [!IMPORTANT] / [!WARNING] / [!CAUTION] */
 function admonitionPlugin(md) {
   const RE = /^\[!(TIP|NOTE|IMPORTANT|WARNING|CAUTION)\]\s*/i;
 
@@ -26,37 +25,28 @@ function admonitionPlugin(md) {
 
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
-
-      // 只处理 blockquote_open
       if (token.type !== "blockquote_open") continue;
-
-      // 检查结构是否符合 blockquote -> paragraph -> inline
       const inlineToken = tokens[i + 2];
       if (!inlineToken || inlineToken.type !== "inline") continue;
 
       const match = inlineToken.content.match(RE);
       if (!match) continue;
 
-      const type = match[1].toLowerCase(); // tip, note, etc.
+      const type = match[1].toLowerCase();
       const titleText = match[1].toUpperCase();
 
-      // 替换 blockquote 为 div.admonition.<type>
       token.tag = "div";
       token.attrSet("class", `admonition ${type}`);
       token.attrSet("data-type", type);
 
-      // 找到结束标签 blockquote_close
       for (let j = i + 1; j < tokens.length; j++) {
         if (tokens[j].type === "blockquote_close") {
           tokens[j].tag = "div";
           break;
         }
       }
-
-      // 清理开头的 [!TYPE]
       inlineToken.content = inlineToken.content.replace(RE, "").trim();
 
-      // 在 blockquote_open 后插入标题 token
       const titleOpen = new state.Token("div_open", "div", 1);
       titleOpen.attrSet("class", "admonition-title");
 
@@ -67,14 +57,13 @@ function admonitionPlugin(md) {
       const titleClose = new state.Token("div_close", "div", -1);
 
       tokens.splice(i + 1, 0, titleOpen, titleInline, titleClose);
-      i += 3; // 跳过刚插入的 token
+      i += 3;
     }
   });
 }
 function localImagePrefixPlugin(md, options = {}) {
   const prefix = options.prefix || "../assets/articles/markdown/";
 
-  // 备份原来的渲染器
   const defaultRender =
     md.renderer.rules.image ||
     function (tokens, idx, opts, env, self) {
@@ -88,7 +77,6 @@ function localImagePrefixPlugin(md, options = {}) {
     if (srcIndex >= 0) {
       const src = token.attrs[srcIndex][1];
 
-      // 只处理“相对路径”的图片（不以 http(s)://、//、data: 开头）
       const isRelative =
         src &&
         !/^(https?:)?\/\//i.test(src) &&
@@ -125,7 +113,6 @@ function loadHighlightStyle(isNightMode) {
     document.head.appendChild(styleLink);
   }
 
-  // 仅在 URL 改变时更新链接
   if (styleLink.href !== url) {
     styleLink.href = url;
   }
@@ -135,15 +122,13 @@ function initCopyCodeButtons() {
 
   blocks.forEach((codeBlock) => {
     const pre = codeBlock.parentElement;
-    if (pre.classList.contains("code-block-with-copy")) return; // 避免重复添加
+    if (pre.classList.contains("code-block-with-copy")) return;
     pre.classList.add("code-block-with-copy");
 
-    // 创建按钮
     const button = document.createElement("button");
     button.className = "copy-code-btn";
     button.innerHTML = '<span class="copy-text">Copy</span>';
 
-    // 点击复制逻辑
     button.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(codeBlock.innerText);
@@ -158,7 +143,6 @@ function initCopyCodeButtons() {
       }
     });
 
-    // 插入按钮
     pre.style.position = "relative";
     pre.appendChild(button);
   });
@@ -523,6 +507,9 @@ function articlesInit() {
     const card = document.createElement("a");
     card.addEventListener("click", (e) => {
       e.preventDefault();
+
+      const newUrl = `?article=${encodeURIComponent(articleData.slug)}`;
+      history.pushState({ article: articleData.slug }, "", newUrl);
       displayArticle(articleData);
     });
     const flag = (articleData.flag || "none").toLowerCase();
@@ -692,11 +679,11 @@ function articlesInit() {
   /**
    * 显示所有文章卡片
    */
-  function displayAllArticles(updateHistory = true) {
+  function displayAllArticles() {
     allArticleCards.forEach((card) => {
       card.style.display = "flex";
     });
-    // if (updateHistory) history.pushState(null, "", location.pathname);
+    history.pushState(null, "", location.pathname);
   }
 
   /**
@@ -802,9 +789,6 @@ function articlesInit() {
       articleDatas.forEach((articleData) => {
         if (!articleData.flag) articleData.flag = "none";
       });
-      articleDatas.forEach((a) => {
-        if (!a.slug) a.slug = generateSlug(a);
-      });
 
       //排序 置顶 > date倒序
       articleDatas.sort((a, b) => {
@@ -851,22 +835,31 @@ function articlesInit() {
       });
       const hiddenElements = document.querySelectorAll(".flag");
       hiddenElements.forEach((el) => observer.observe(el));
-      const hasRedirectHash = location.hash && location.hash.length > 1;
-      const hasSearchParam = location.search && location.search.length > 1;
 
-      // 如果有特殊状态，传入 false，告诉 displayAllArticles 不要乱动地址栏
-      // 这样 restoreFrom404Redirect 才有机会读取到原始数据
-      const shouldUpdateUrl = !(hasRedirectHash || hasSearchParam);
-
-      displayAllArticles(shouldUpdateUrl);
+      displayAllArticles();
       setupEventListeners();
       initScrollToTop();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentSlug = urlParams.get("article");
+      if (currentSlug) {
+        const targetArticle = allArticlesData.find(
+          (a) => a.slug === currentSlug
+        );
+        if (targetArticle) {
+          displayArticle(targetArticle);
+        } else {
+          console.warn(`文章 ${currentSlug} 不存在`);
+          displayAllArticles();
+        }
+      } else {
+        displayAllArticles();
+      }
     } catch (error) {
       console.error("加载文章数据失败:", error);
       articleListContainer.innerHTML =
         '<p style="color: red;">抱歉，文章列表加载失败。</p>';
     }
-    // restoreFrom404Redirect();
   }
   const mainArticleList = document.querySelector(".main-article-list");
   const mainArticleContent = document.querySelector(".main-article-content");
@@ -893,21 +886,20 @@ function articlesInit() {
     const container = document.getElementById("utterances-container");
     if (!container) return;
     container.innerHTML = "";
-    const oldIframe = container.querySelector("iframe");
-    if (oldIframe) oldIframe.remove();
   }
   //挂载Utterances
   function mountUtterances(opts = {}) {
     const container = document.getElementById("utterances-container");
     if (!container) return;
-    const repo = opts.repo || "yourname/your-repo";
-    const issueTerm = opts.issueTerm || "pathname";
+    unmountUtterances();
+    const repo = opts.repo || "FanRec/FanRec.github.io";
+    const issueTerm = opts.issueTerm || "title";
     const theme =
       opts.theme ||
       (document.body.classList.contains("night-mode")
         ? "github-dark"
         : "github-light");
-    unmountUtterances();
+
     const script = document.createElement("script");
     script.src = "https://utteranc.es/client.js";
     script.async = true;
@@ -917,8 +909,8 @@ function articlesInit() {
     script.setAttribute("theme", theme);
     container.appendChild(script);
   }
-  async function displayArticle(articleData, options = {}) {
-    const pushHistory = options.pushHistory !== false;
+
+  async function displayArticle(articleData) {
     try {
       const FilePath = `../assets/articles/markdown/${articleData.filePath}`;
 
@@ -948,135 +940,52 @@ function articlesInit() {
         articleContent.innerHTML = html;
         initCopyCodeButtons();
 
-        // if (pushHistory) {
-        //   const slug = articleData.slug || generateSlug(articleData);
-        //   window.__prevPathBeforeArticle =
-        //     window.location.pathname +
-        //     window.location.search +
-        //     window.location.hash;
-        //   history.pushState(
-        //     { view: "article", slug },
-        //     articleData.title,
-        //     `/article/${encodeURIComponent(slug)}`
-        //   );
-        // }
-
         mountUtterances({
           repo: "FanRec/FanRec.github.io",
-          issueTerm: "pathname",
+          issueTerm: articleData.title,
         });
-
         mainArticleContent.classList.remove("hide");
+        window.scrollTo(0, 0);
       }, 200);
     } catch (error) {
       console.error("加载文章失败:", error);
     }
   }
-  // function restoreFrom404Redirect() {
-  //   if (!location.hash || location.hash.length <= 1) return;
-
-  //   // 尝试多次 decode，直到解成真正的路径
-  //   let raw = location.hash.slice(1);
-  //   let decoded = raw;
-  //   try {
-  //     // 最多 decode 3 次防止死循环
-  //     for (let i = 0; i < 3; i++) {
-  //       const d = decodeURIComponent(decoded);
-  //       if (d === decoded) break;
-  //       decoded = d;
-  //     }
-  //   } catch (e) {
-  //     console.warn("restoreFrom404Redirect decode failed", e);
-  //   }
-
-  //   console.log("[restoreFrom404Redirect] decoded =", decoded);
-  //   if (!decoded.startsWith("/")) return;
-
-  //   // 延迟执行确保文章数据加载完成
-  //   setTimeout(() => {
-  //     try {
-  //       const fake = new URL("https://example.com" + decoded);
-  //       const pathname = fake.pathname; // /article/Prim-Kruskal
-  //       const search = fake.search; // ?utterances=xxxx
-  //       const match = pathname.match(/^\/article\/(.+)$/);
-  //       if (!match) return;
-
-  //       const slug = decodeURIComponent(match[1]);
-  //       const article =
-  //         allArticlesData &&
-  //         allArticlesData.find((a) => (a.slug || generateSlug(a)) === slug);
-  //       if (!article) {
-  //         console.log("[restore] article not found:", slug);
-  //         return;
-  //       }
-
-  //       console.log("[restore] found article:", slug);
-
-  //       let newUrlHash = "#article/" + encodeURIComponent(slug);
-  //       if (search) {
-  //         newUrlHash += search;
-  //       }
-  //       // 不跳回 blog.html，只更新 hash
-  //       history.replaceState(
-  //         { view: "article", slug },
-  //         article.title,
-  //         newUrlHash
-  //       );
-
-  //       // 加载文章（不 push 历史）
-  //       displayArticle(article, { pushHistory: false });
-
-  //       // 如果带有 utterances 参数，则重新挂载评论
-  //       if (search && search.includes("utterances=")) {
-  //         console.log("[restore] detected utterances param → remount comments");
-  //         setTimeout(() => {
-  //           unmountUtterances();
-  //           mountUtterances({
-  //             repo: "FanRec/FanRec.github.io",
-  //             issueTerm: "url", // 用完整 URL 标识
-  //           });
-  //         }, 500);
-  //       }
-  //     } catch (err) {
-  //       console.error("[restoreFrom404Redirect] parse error:", err);
-  //     }
-  //   }, 300);
-  // }
-
   const backToListBtn = document.getElementById("back-to-list-btn");
   if (backToListBtn) {
     backToListBtn.addEventListener("click", () => {
-      // const prev = window.__prevPathBeforeArticle || "/";
-      // history.pushState({ view: "list" }, "", prev);
+      history.pushState(null, "", location.pathname);
       mainArticleContent.classList.add("hide");
       setTimeout(() => {
         mainArticleContent.style.display = "none";
         mainArticleList.style.display = "flex";
         mainArticleList.classList.remove("hide");
-        // unmountUtterances();
+        unmountUtterances();
       }, 200);
     });
   }
-  // window.addEventListener("popstate", (e) => {
-  //   const state = e.state;
-  //   if (state && state.view === "article" && state.slug) {
-  //     const article = allArticlesData.find((a) => a.slug === state.slug);
-  //     if (article) {
-  //       displayArticle(article, { pushHistory: false });
-  //       return;
-  //     }
-  //   }
+  window.addEventListener("popstate", (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get("article");
 
-  //   if (location.hash.startsWith("#article/")) return;
+    if (slug) {
+      // 如果 URL 有 slug，显示对应文章
+      const targetArticle = allArticlesData.find((a) => a.slug === slug);
+      if (targetArticle) {
+        displayArticle(targetArticle);
+      }
+    } else {
+      // 如果没有 slug，显示列表
+      mainArticleContent.classList.add("hide");
+      setTimeout(() => {
+        mainArticleContent.style.display = "none";
+        mainArticleList.style.display = "flex";
+        mainArticleList.classList.remove("hide");
+        unmountUtterances();
+      }, 200);
+    }
+  });
 
-  //   mainArticleContent.classList.add("hide");
-  //   setTimeout(() => {
-  //     mainArticleContent.style.display = "none";
-  //     mainArticleList.style.display = "flex";
-  //     mainArticleList.classList.remove("hide");
-  //     unmountUtterances();
-  //   }, 200);
-  // });
   loadArticles();
 }
 
