@@ -318,7 +318,7 @@ function initSettingsToggle() {
       }
       loadHighlightStyle(true);
     }
-    refreshUtterancesTheme();
+    updateUtterancesTheme();
   }
   lightMode.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -902,7 +902,6 @@ function articlesInit() {
         : "github-light");
 
     const script = document.createElement("script");
-    script.id = "utterances-script";
     script.src = "https://utteranc.es/client.js";
     script.async = true;
     script.crossOrigin = "anonymous";
@@ -912,15 +911,18 @@ function articlesInit() {
     container.appendChild(script);
   }
   //刷新评论区主题
-  function refreshUtterancesTheme() {
-    const theme =
-      opts.theme ||
-      (document.body.classList.contains("night-mode")
-        ? "github-dark"
-        : "github-light");
-    if (utterancesScript) {
-      const utterancesScript = document.getElementById("utterances-script");
-      script.setAttribute("theme", theme);
+  function updateUtterancesTheme() {
+    const isDark = document.body.classList.contains("night-mode");
+    const theme = isDark ? "github-dark" : "github-light";
+
+    const message = {
+      type: "set-theme",
+      theme: theme,
+    };
+
+    const iframe = document.querySelector(".utterances-frame");
+    if (iframe) {
+      iframe.contentWindow.postMessage(message, "https://utteranc.es");
     }
   }
   async function displayArticle(articleData) {
