@@ -117,20 +117,25 @@ function loadHighlightStyle(isNightMode) {
     styleLink.href = url;
   }
 }
-function updateUtterancesTheme() {
-  const isNight = document.body.classList.contains("night-mode");
-  const theme = isNight ? "github-dark" : "github-light";
-
-  const iframe = document.querySelector("iframe.utterances-frame");
-
-  if (iframe && iframe.contentWindow) {
-    const message = {
-      type: "set-theme",
-      theme: theme,
-    };
-    // 向 utterances 发送跨域消息
-    iframe.contentWindow.postMessage(message, "https://utteranc.es");
+function sendThemeToUtterances(theme) {
+  const message = {
+    type: "set-theme",
+    theme: theme,
+  };
+  function attempt() {
+    const iframe = document.querySelector("iframe.utterances-frame");
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(message, "https://utteranc.es");
+    } else {
+      if (!window._utteranceRetryCount) window._utteranceRetryCount = 0;
+      if (window._utteranceRetryCount < 10) {
+        window._utteranceRetryCount++;
+        setTimeout(attempt, 500);
+      }
+    }
   }
+
+  attempt();
 }
 function initCopyCodeButtons() {
   const blocks = document.querySelectorAll("pre > code.hljs");
@@ -333,7 +338,8 @@ function initSettingsToggle() {
       }
       loadHighlightStyle(true);
     }
-    updateUtterancesTheme();
+    const theme = isLight ? "github-light" : "github-dark";
+    sendThemeToUtterances(theme);
   }
   lightMode.addEventListener("click", (event) => {
     event.stopPropagation();
