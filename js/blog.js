@@ -1,173 +1,14 @@
-import markdownit from "https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm";
-const mdIt = markdownit({
-  html: true,
-  linkify: true,
-  typographer: true,
-  highlight: function (str, lang) {
-    const validLang =
-      lang && window.hljs && window.hljs.getLanguage(lang) ? lang : "";
-    const highlighted = validLang
-      ? window.hljs.highlight(str, {
-          language: validLang,
-          ignoreIllegals: true,
-        }).value
-      : mdIt.utils.escapeHtml(str);
-
-    return `<pre><code class="hljs" data-lang="${validLang}">${highlighted}</code></pre>`;
-  },
-});
-/* 识别 > [!TIP] / [!NOTE] / [!IMPORTANT] / [!WARNING] / [!CAUTION] */
-function admonitionPlugin(md) {
-  const RE = /^\[!(TIP|NOTE|IMPORTANT|WARNING|CAUTION)\]\s*/i;
-
-  md.core.ruler.after("block", "admonition", function (state) {
-    const tokens = state.tokens;
-
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      if (token.type !== "blockquote_open") continue;
-      const inlineToken = tokens[i + 2];
-      if (!inlineToken || inlineToken.type !== "inline") continue;
-
-      const match = inlineToken.content.match(RE);
-      if (!match) continue;
-
-      const type = match[1].toLowerCase();
-      const titleText = match[1].toUpperCase();
-
-      token.tag = "div";
-      token.attrSet("class", `admonition ${type}`);
-      token.attrSet("data-type", type);
-
-      for (let j = i + 1; j < tokens.length; j++) {
-        if (tokens[j].type === "blockquote_close") {
-          tokens[j].tag = "div";
-          break;
-        }
-      }
-      inlineToken.content = inlineToken.content.replace(RE, "").trim();
-
-      const titleOpen = new state.Token("div_open", "div", 1);
-      titleOpen.attrSet("class", "admonition-title");
-
-      const titleInline = new state.Token("inline", "", 0);
-      titleInline.content = titleText;
-      titleInline.children = [];
-
-      const titleClose = new state.Token("div_close", "div", -1);
-
-      tokens.splice(i + 1, 0, titleOpen, titleInline, titleClose);
-      i += 3;
-    }
-  });
-}
-function localImagePrefixPlugin(md, options = {}) {
-  const prefix = options.prefix || "../assets/articles/markdown/";
-
-  const defaultRender =
-    md.renderer.rules.image ||
-    function (tokens, idx, opts, env, self) {
-      return self.renderToken(tokens, idx, opts);
-    };
-
-  md.renderer.rules.image = function (tokens, idx, opts, env, self) {
-    const token = tokens[idx];
-    const srcIndex = token.attrIndex("src");
-
-    if (srcIndex >= 0) {
-      const src = token.attrs[srcIndex][1];
-
-      const isRelative =
-        src &&
-        !/^(https?:)?\/\//i.test(src) &&
-        !/^data:/i.test(src) &&
-        !src.startsWith(prefix);
-
-      if (isRelative) {
-        token.attrs[srcIndex][1] = prefix + src;
-      }
-    }
-
-    return defaultRender(tokens, idx, opts, env, self);
-  };
-}
-// 注册插件
-mdIt.use(admonitionPlugin);
-mdIt.use(localImagePrefixPlugin, { prefix: "../assets/articles/markdown/" });
-
-function loadHighlightStyle(isNightMode) {
-  const styleId = "hljs-theme";
-  let styleLink = document.getElementById(styleId);
-
-  const lightUrl =
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css";
-  const darkUrl =
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css";
-
-  const url = isNightMode ? darkUrl : lightUrl;
-
-  if (!styleLink) {
-    styleLink = document.createElement("link");
-    styleLink.id = styleId;
-    styleLink.rel = "stylesheet";
-    document.head.appendChild(styleLink);
-  }
-
-  if (styleLink.href !== url) {
-    styleLink.href = url;
-  }
-}
-function sendThemeToUtterances(theme) {
-  const message = {
-    type: "set-theme",
-    theme: theme,
-  };
-  function attempt() {
-    const iframe = document.querySelector("iframe.utterances-frame");
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.postMessage(message, "https://utteranc.es");
-    } else {
-      if (!window._utteranceRetryCount) window._utteranceRetryCount = 0;
-      if (window._utteranceRetryCount < 10) {
-        window._utteranceRetryCount++;
-        setTimeout(attempt, 500);
-      }
-    }
-  }
-
-  attempt();
-}
-function initCopyCodeButtons() {
-  const blocks = document.querySelectorAll("pre > code.hljs");
-
-  blocks.forEach((codeBlock) => {
-    const pre = codeBlock.parentElement;
-    if (pre.classList.contains("code-block-with-copy")) return;
-    pre.classList.add("code-block-with-copy");
-
-    const button = document.createElement("button");
-    button.className = "copy-code-btn";
-    button.innerHTML = '<span class="copy-text">Copy</span>';
-
-    button.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(codeBlock.innerText);
-        button.classList.add("copied");
-        button.querySelector(".copy-text").textContent = "Copied!";
-        setTimeout(() => {
-          button.classList.remove("copied");
-          button.querySelector(".copy-text").textContent = "Copy";
-        }, 1500);
-      } catch (err) {
-        console.error("复制失败:", err);
-      }
-    });
-
-    pre.style.position = "relative";
-    pre.appendChild(button);
-  });
-}
-
+import mdIt from "./mdit.js";
+import {
+  unmountUtterances,
+  mountUtterances,
+  sendThemeToUtterances,
+} from "./utteerances.js";
+import {
+  loadHighlightStyle,
+  initCopyCodeButtons,
+  createSvgIcon,
+} from "./utils.js";
 function initSettingsToggle() {
   const toggles = [
     {
@@ -465,64 +306,6 @@ function articlesInit() {
     "M422.613333 85.333333H426.666667a38.613333 38.613333 0 0 1 38.4 42.453334L387.84 900.266667a42.666667 42.666667 0 0 1-42.453333 38.4H341.333333a38.613333 38.613333 0 0 1-38.4-42.453334L380.16 123.733333a42.666667 42.666667 0 0 1 42.453333-38.4zM678.613333 85.333333H682.666667a38.613333 38.613333 0 0 1 38.4 42.453334L643.84 900.266667a42.666667 42.666667 0 0 1-42.453333 38.4H597.333333a38.613333 38.613333 0 0 1-38.4-42.453334L636.16 123.733333a42.666667 42.666667 0 0 1 42.453333-38.4z";
   const tagIconPath3 =
     "M128 597.333333m42.666667 0l682.666666 0q42.666667 0 42.666667 42.666667l0 0q0 42.666667-42.666667 42.666667l-682.666666 0q-42.666667 0-42.666667-42.666667l0 0q0-42.666667 42.666667-42.666667Z";
-
-  /**
-   * 创建 SVG 图标
-   * @param {string} pId1 - 第一个 path 的 d 属性值
-   * @param {string} [pId2] - 第二个 path 的 d 属性值
-   * @param {string} [pId3] - 第三个 path 的 d 属性值
-   * @param {string} [fill1='#ffffff'] - 第一个 path 的 fill 颜色
-   * @param {string} [fill2='#111111'] - 第二个 path 的 fill 颜色
-   * @param {string} [fill3='#ffffff'] - 第三个 path 的 fill 颜色
-   * @returns {SVGElement} - 生成的 SVG 元素
-   */
-  function createSvgIcon(
-    pId1,
-    pId2,
-    pId3,
-    fill1 = "#ffffff",
-    fill2 = "#ffffff",
-    fill3 = "#ffffff"
-  ) {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("class", "icon");
-    svg.setAttribute("viewBox", "0 0 1024 1024");
-    svg.setAttribute("width", "16");
-    svg.setAttribute("height", "16");
-    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-
-    const path1 = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "path"
-    );
-    path1.setAttribute("d", pId1);
-    path1.setAttribute("fill", fill1);
-
-    svg.appendChild(path1);
-
-    if (pId2) {
-      const path2 = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      );
-      path2.setAttribute("d", pId2);
-      path2.setAttribute("fill", fill2);
-      svg.appendChild(path2);
-    }
-
-    if (pId3) {
-      const path3 = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      );
-      path3.setAttribute("d", pId3);
-      path3.setAttribute("fill", fill3);
-      svg.appendChild(path3);
-    }
-
-    return svg;
-  }
 
   /* 生成卡片 */
   function createArticleCard(articleData) {
@@ -890,50 +673,6 @@ function articlesInit() {
   const mainArticleContent = document.querySelector(".main-article-content");
   const articleContent = document.getElementById("article-content");
   const articleTitle = document.getElementById("article-content-title");
-  //生成Slug
-  function generateSlug(articleData) {
-    let base =
-      articleData.slug ||
-      articleData.filePath ||
-      articleData.title ||
-      "article";
-    base = base.replace(/\.[^/.]+$/, "");
-    base = base.replace(/\\/g, "/").split("/").pop();
-    base = base
-      .toLowerCase()
-      .replace(/[^\w\u4e00-\u9fff-]+/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    return base || "article";
-  }
-  //卸载Utterances
-  function unmountUtterances() {
-    const container = document.getElementById("utterances-container");
-    if (!container) return;
-    container.innerHTML = "";
-  }
-  //挂载Utterances
-  function mountUtterances(opts = {}) {
-    const container = document.getElementById("utterances-container");
-    if (!container) return;
-    unmountUtterances();
-    const repo = opts.repo || "FanRec/FanRec.github.io";
-    const issueTerm = opts.issueTerm || "title";
-    const theme =
-      opts.theme ||
-      (document.body.classList.contains("night-mode")
-        ? "github-dark"
-        : "github-light");
-
-    const script = document.createElement("script");
-    script.src = "https://utteranc.es/client.js";
-    script.async = true;
-    script.crossOrigin = "anonymous";
-    script.setAttribute("repo", repo);
-    script.setAttribute("issue-term", issueTerm);
-    script.setAttribute("theme", theme);
-    container.appendChild(script);
-  }
 
   async function displayArticle(articleData) {
     try {
@@ -994,13 +733,11 @@ function articlesInit() {
     const slug = urlParams.get("article");
 
     if (slug) {
-      // 如果 URL 有 slug，显示对应文章
       const targetArticle = allArticlesData.find((a) => a.slug === slug);
       if (targetArticle) {
         displayArticle(targetArticle);
       }
     } else {
-      // 如果没有 slug，显示列表
       mainArticleContent.classList.add("hide");
       setTimeout(() => {
         mainArticleContent.style.display = "none";
