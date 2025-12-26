@@ -1,5 +1,18 @@
 [
   {
+    "id": "article-4",
+    "flag": "none",
+    "title": "并查集 —— Disjoint Set Union",
+    "date": "2025-12-26",
+    "excerpt": "并查集 —— Disjoint Set Union",
+    "category": "Algorithm",
+    "tag": "Algorithm/Note/Set",
+    "words": "305",
+    "readingTime": "10min",
+    "filePath": "并查集.md",
+    "slug": "Disjoint-Set-Union"
+  },
+  {
     "id": "article-3",
     "flag": "none",
     "title": "最小生成树 —— Prim | Kruskal算法",
