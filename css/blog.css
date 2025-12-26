@@ -80,7 +80,7 @@ body.night-mode {
 }
 .scroll-to-top-btn {
   position: fixed;
-  bottom: 35px;
+  bottom: 110px;
   right: 60px;
   width: 55px;
   height: 55px;
@@ -1299,7 +1299,7 @@ body.night-mode .copy-code-btn.copied {
 /* 文章目录导航 */
 .toc-toggle-btn {
   position: fixed;
-  bottom: 105px;
+  bottom: 35px;
   right: 60px;
 
   width: 55px;
@@ -1336,7 +1336,7 @@ body.night-mode .copy-code-btn.copied {
 .toc-panel {
   position: fixed;
 
-  bottom: 110px;
+  bottom: 40px;
   right: 130px;
 
   width: 250px;
