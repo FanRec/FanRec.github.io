@@ -704,6 +704,8 @@ function articlesInit() {
         articleContent.innerHTML = html;
         initCopyCodeButtons();
 
+        generateTOC();
+
         mountUtterances({
           repo: "FanRec/FanRec.github.io",
           issueTerm: articleData.title,
@@ -750,8 +752,92 @@ function articlesInit() {
 
   loadArticles();
 }
+function initTOC() {
+  const tocBtn = document.getElementById("toc-toggle-btn");
+  const tocPanel = document.getElementById("toc-panel");
+  const closeBtn = document.querySelector(".toc-close-btn");
 
+  if (!tocBtn || !tocPanel) return;
+
+  function toggleTOC() {
+    tocPanel.classList.toggle("active");
+  }
+
+  tocBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleTOC();
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      tocPanel.classList.remove("active");
+    });
+  }
+
+  document.addEventListener("click", (e) => {
+    if (
+      tocPanel.classList.contains("active") &&
+      !tocPanel.contains(e.target) &&
+      e.target !== tocBtn
+    ) {
+      tocPanel.classList.remove("active");
+    }
+  });
+}
+
+function generateTOC() {
+  const articleContent = document.getElementById("article-content");
+  const tocContent = document.getElementById("toc-content");
+
+  if (!articleContent || !tocContent) return;
+
+  tocContent.innerHTML = "";
+
+  const headers = articleContent.querySelectorAll("h1, h2, h3, h4");
+
+  if (headers.length === 0) {
+    tocContent.innerHTML =
+      '<div style="padding:16px;color:#999;font-size:13px">暂无目录</div>';
+    return;
+  }
+
+  headers.forEach((header, index) => {
+    if (!header.id) {
+      header.id = `article-heading-${index}`;
+    }
+
+    const link = document.createElement("a");
+    link.href = `#${header.id}`;
+    link.className = `toc-link toc-${header.tagName.toLowerCase()}`;
+    link.textContent = header.textContent;
+    link.title = header.textContent;
+
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById(header.id);
+      if (target) {
+        const navHeight = 60;
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - navHeight - 20;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+
+        if (window.innerWidth < 768) {
+          document.getElementById("toc-panel").classList.remove("active");
+        }
+      }
+    });
+
+    tocContent.appendChild(link);
+  });
+}
 document.addEventListener("DOMContentLoaded", () => {
   articlesInit();
   initSettingsToggle();
+  initTOC();
 });
