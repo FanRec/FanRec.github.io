@@ -8,6 +8,7 @@ import {
   loadHighlightStyle,
   initCopyCodeButtons,
   createSvgIcon,
+  formatPath,
 } from "./utils.js";
 function initSettingsToggle() {
   const toggles = [
@@ -836,8 +837,67 @@ function generateTOC() {
     tocContent.appendChild(link);
   });
 }
-document.addEventListener("DOMContentLoaded", () => {
+async function loadConfig() {
+  const pageIcon = document.getElementById("favicon");
+  const navTitle = document.getElementById("navTitle");
+  const bannerTitle = document.getElementById("bannerTitle");
+  const profileCardAvatar = document.querySelector(
+    ".profile-card .card-avatar"
+  );
+  const profileCardTitle = document.querySelector(".profile-card .card-title");
+  const profileCardDesc = document.querySelector(
+    ".profile-card .card-description"
+  );
+
+  try {
+    const ConfigPath = "../config.json";
+
+    const response = await fetch(ConfigPath);
+    if (!response.ok) {
+      throw new Error(`ERROR:状态码: ${response.status}`);
+    }
+    const config = await response.json();
+    if (config.title) document.title = `${config.title} | Blog`;
+    if (pageIcon && config.blog?.icon) {
+      pageIcon.href = `${formatPath(config.blog.icon)}?v=1`;
+    }
+    if (navTitle && config.blog?.titleEng)
+      navTitle.innerHTML = `<strong>${config.title}</strong>|${config.blog.titleEng}`;
+    if (bannerTitle && config.blog?.pageHead?.content) {
+      const pageHead = config.blog.pageHead;
+      let content = "";
+      if (pageHead.random) {
+        //TODO:写完
+      } else {
+        content = pageHead.content[0];
+      }
+      if (pageHead.typed) {
+        //TODO:写完
+      }
+      bannerTitle.innerHTML = content;
+    }
+    if (profileCardAvatar && config.masterInfo?.avatar) {
+      profileCardAvatar.style.backgroundImage = `url(${formatPath(
+        config.masterInfo.avatar
+      )})`;
+    }
+    if (profileCardTitle && config.masterInfo?.name) {
+      const name = config.masterInfo?.name;
+      if (name.zh) profileCardTitle.innerHTML = name.zh;
+    }
+    if (profileCardDesc && config.masterInfo?.description) {
+      profileCardDesc.innerHTML = config.masterInfo?.description;
+    }
+  } catch (error) {
+    console.error("配置加载失败", error);
+  }
+}
+async function init() {
+  await loadConfig();
   articlesInit();
   initSettingsToggle();
   initTOC();
+}
+document.addEventListener("DOMContentLoaded", () => {
+  init();
 });

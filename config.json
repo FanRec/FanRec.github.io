@@ -1,0 +1,84 @@
+{
+  "title": "冰窟",
+  "mainTitle": "冰の窟",
+  "subTitle": "<b>Kind and Kawaii</b>, Forever!",
+  "masterInfo": {
+    "name": {
+      "zh": "小纪",
+      "en": "XiaoJi",
+      "ja": "ショウキ"
+    },
+    "description": "大家好这里是我的个人网站~",
+    "techStack": [
+      "html",
+      "css",
+      "javascript",
+      "c#",
+      "c++",
+      "Npm",
+      "TypeScript",
+      "Unity"
+    ],
+    "avatar": "/assets/img/avatar.png",
+    "socialLink": {
+      "link": {
+        "email": "",
+        "qq": "",
+        "x": "",
+        "github": "",
+        "bilibili": "",
+        "telegram": ""
+      },
+      "enable": ["email", "qq", "x", "github", "bilibili", "telegram"]
+    },
+    "friendLink": [
+      {
+        "siteName": "BR.",
+        "ownerName": "BandieraRosa",
+        "avatar": "https://bandierarosa.github.io/image/Luting.png",
+        "link": "https://bandierarosa.github.io",
+        "desc": "这是一个优秀的博客"
+      }
+    ],
+    "aboutMe": {
+      "postergirl": "/assets/img/Home/zhenji.png",
+      "paragraphs": [
+        "A Sleep Developer 🛌 <span class='note'>( 这开发者正经吗？)</span>",
+        "平平无奇的大二学生",
+        "只会原生 HTML/CSS/JS 的前端开发者，Unity 独立游戏开发者 <span class='note'>( 没有任何成果/_ \\ )</span>，我的世界玩家",
+        "喜欢的运动是...唔? 好像平常会跑跑步。<span class='note'>( 这不就是个基本不运动的废物啊喂!.·´¯`(>▂<)´¯`·. )</span>",
+        "爱好嘛... 让我想想... 嗯... 平常喜欢看番剧，偶尔喜欢吃甜品，做一些小手工，沉迷戴上耳机听歌写代码♬，躲在阴暗的角落里滋生......"
+      ]
+    },
+    "works": [
+      {
+        "title": "瀑布流相册",
+        "desc": "有很多非常好看的二次元高清图片",
+        "img": "/assets/img/Home/AlbumGIF.gif"
+      },
+      {
+        "title": "开源静态博客",
+        "desc": "即将开源...",
+        "img": "/assets/img/Home/BlogGIF.gif"
+      },
+      {
+        "title": "游戏开发学习",
+        "desc": "人物模型素材来自“元素战争”动画作者 No_Tables 开源",
+        "img": "/assets/img/Home/YSZZGIF.gif"
+      }
+    ]
+  },
+
+  "blog": {
+    "titleEng": "MY PROFILE",
+    "icon": "/favicon.ico",
+    "pageHead": {
+      "content": ["小纪の博客"],
+      "random": false,
+      "typed": false
+    }
+  },
+  "album": {
+    "icon": "/favicon.ico"
+  }
+}

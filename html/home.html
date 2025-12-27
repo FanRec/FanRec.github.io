@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>冰窟|Home</title>
+    <link rel="icon" href="../favicon.ico?v=1" />
     <script src="../js/saveload.js"></script>
     <link type="text/css" rel="stylesheet" href="../css/my-font.css" />
     <link type="text/css" rel="stylesheet" href="../css/home.css" />
-    <script src="../js/home.js"></script>
+    <script type="module" src="../js/home.js"></script>
   </head>
   <body>
     <div>
@@ -142,16 +143,16 @@
           <div class="right">
             <div class="titles">
               <h1>
-                <span>冰の窟</span>
+                <span id="headerTitle">冰の窟</span>
                 <b>
                   <span class="first-name">
-                    <span>くうき</span>
-                    <span class="small english-name">Xiaoji</span>
-                    <span class="small chinese-name">小 纪</span>
+                    <span id="name-ja">くうき</span>
+                    <span id="name-en" class="small english-name">Xiaoji</span>
+                    <span id="name-zh" class="small chinese-name">小 纪</span>
                   </span>
                 </b>
               </h1>
-              <h2><b>Kind and Kawaii</b>, Forever!~</h2>
+              <h2 id="headerSubTitle"><b>Kind and Kawaii</b>, Forever!~</h2>
             </div>
             <div class="home-nav">
               <a href="#About">About &#10148;</a>

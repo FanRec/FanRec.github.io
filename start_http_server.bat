@@ -1,7 +1,7 @@
 @echo off
 CHCP 65001
 set PORT=8000
-set FILENAME=./html/blog.html
+set FILENAME=index.html
 
 echo 正在启动本地服务器 (端口：%PORT%)...
 echo 请勿关闭此窗口！

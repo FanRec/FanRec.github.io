@@ -1,3 +1,4 @@
+import { formatPath } from "./utils.js";
 const IMAGE_CONFIG_DIR = "../json/album/imageConfig.json";
 async function render() {
   const container = document.getElementById("waterfall-container");
@@ -55,4 +56,43 @@ async function render() {
   pureModeCheck.checked = localStorage.getItem("pureMode") === "true";
   togglePureMode(pureModeCheck.checked);
 }
-render();
+async function loadConfig() {
+  const pageIcon = document.getElementById("favicon");
+  const friendLinkWrapper = document.querySelector(".friend-group");
+  try {
+    const ConfigPath = "../config.json";
+
+    const response = await fetch(ConfigPath);
+    if (!response.ok) {
+      throw new Error(`ERROR:状态码: ${response.status}`);
+    }
+    const config = await response.json();
+    if (config.title) document.title = `${config.title} | Album`;
+    if (pageIcon && config.blog?.icon) {
+      pageIcon.href = `${formatPath(config.blog.icon)}?v=1`;
+    }
+    if (friendLinkWrapper && config.masterInfo?.friendLink) {
+      const friendLinks = config.masterInfo.friendLink;
+      friendLinkWrapper.innerHTML = "";
+      friendLinks.forEach((friendLink) => {
+        const link = document.createElement("a");
+        link.href = friendLink.link ? friendLink.link : "#";
+        link.target = "_blank";
+        link.title = friendLink.desc ? friendLink.desc : "友人のサイト";
+        link.innerHTML = `${
+          friendLink.ownerName ? friendLink.ownerName : "未知"
+        }`;
+        friendLinkWrapper.appendChild(link);
+      });
+    }
+  } catch (error) {
+    console.error("配置加载失败", error);
+  }
+}
+async function init() {
+  await loadConfig();
+  render();
+}
+document.addEventListener("DOMContentLoaded", () => {
+  init();
+});

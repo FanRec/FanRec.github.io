@@ -112,4 +112,14 @@ function createSvgIcon(
 
   return svg;
 }
-export { loadHighlightStyle, initCopyCodeButtons, createSvgIcon };
+function formatPath(configPath) {
+  if (configPath.startsWith("/") || configPath.startsWith("http")) {
+    return configPath;
+  }
+
+  const depth = window.location.pathname.split("/").filter(Boolean).length;
+  const prefix = depth > 0 ? "../".repeat(depth) : "./";
+
+  return prefix + configPath.replace(/^\.\//, "");
+}
+export { loadHighlightStyle, initCopyCodeButtons, createSvgIcon, formatPath };
