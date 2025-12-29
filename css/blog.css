@@ -923,15 +923,7 @@ body.bg-mode-solid .banner-container {
   max-height: 0;
 }
 /* END */
-@media (max-width: 900px) {
-  .main-content-wrapper {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .profile-card {
-    margin-bottom: 1.5rem;
-  }
-}
+
 .hide {
   opacity: 0;
   transform: translateY(-3rem);
@@ -940,9 +932,7 @@ body.bg-mode-solid .banner-container {
   border: 3px solid var(--theme-color);
   box-shadow: 0 6px 20px rgba(255, 107, 107, 0.06);
 } */
-/* =========================================
-   Markdown 内容样式 (GitHub 风格复刻)
-   ========================================= */
+/* Markdown 内容样式 */
 
 .article-content {
   line-height: 1.6;
@@ -950,7 +940,6 @@ body.bg-mode-solid .banner-container {
   color: var(--text-color);
 }
 
-/* --- 标题 --- */
 .article-content h1,
 .article-content h2,
 .article-content h3,
@@ -977,7 +966,6 @@ body.bg-mode-solid .banner-container {
   font-size: 1.25em;
 }
 
-/* --- 段落与列表 --- */
 .article-content p {
   margin-bottom: 16px;
 }
@@ -987,7 +975,6 @@ body.bg-mode-solid .banner-container {
   margin-bottom: 16px;
 }
 
-/* --- 链接 --- */
 .article-content a {
   color: var(--theme-color);
   text-decoration: none;
@@ -996,7 +983,6 @@ body.bg-mode-solid .banner-container {
   text-decoration: underline;
 }
 
-/* --- 引用 Blockquote --- */
 .article-content blockquote {
   padding: 0 1em;
   color: var(--secondary-text);
@@ -1004,9 +990,8 @@ body.bg-mode-solid .banner-container {
   margin: 0 0 16px 0;
   background-color: transparent;
 }
-/* 如果想要更像 GitHub，可以在亮色模式下给引用加个浅灰背景，这里保持透明适配你的设计 */
 
-/* --- 代码块 (Code Blocks) --- */
+/* 代码块 */
 .article-content pre {
   padding: 16px;
   overflow: auto;
@@ -1048,7 +1033,7 @@ body.bg-mode-solid .banner-container {
   text-transform: uppercase;
 }
 
-/* 滚动条美化（可选） */
+/* 滚动条美化 */
 .hljs::-webkit-scrollbar {
   height: 8px;
 }
@@ -1056,7 +1041,7 @@ body.bg-mode-solid .banner-container {
   background-color: rgba(128, 128, 128, 0.3);
   border-radius: 4px;
 }
-/* --- 表格 (Tables) --- */
+/* 表格 (Tables) */
 .article-content table {
   border-spacing: 0;
   border-collapse: collapse;
@@ -1072,7 +1057,7 @@ body.bg-mode-solid .banner-container {
   padding: 6px 13px;
   border: 1px solid var(--card-border, #d0d7de);
 }
-/* 夜间模式表格边框颜色调整 */
+/* 夜间模式表格边框颜色 */
 body.night-mode .article-content table th,
 body.night-mode .article-content table td {
   border-color: #30363d;
@@ -1080,7 +1065,7 @@ body.night-mode .article-content table td {
 
 .article-content table th {
   font-weight: 600;
-  background-color: var(--main-bg); /* 表头背景 */
+  background-color: var(--main-bg);
 }
 
 .article-content table tr {
@@ -1089,10 +1074,10 @@ body.night-mode .article-content table td {
 }
 
 .article-content table tr:nth-child(2n) {
-  background-color: var(--main-bg); /* 斑马纹 */
+  background-color: var(--main-bg);
 }
 
-/* --- 图片 --- */
+/* 图片 */
 .article-content img {
   max-width: 100%;
   box-sizing: border-box;
@@ -1103,7 +1088,7 @@ body.night-mode .article-content table td {
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
 }
 
-/* --- 分割线 --- */
+/* 分割线 */
 .article-content hr {
   height: 0.25em;
   padding: 0;
@@ -1111,28 +1096,24 @@ body.night-mode .article-content table td {
   background-color: var(--card-border, #e1e4e8);
   border: 0;
 }
-/* =========================================
-   Admonition (警示块) 样式
-   ========================================= */
+/* Admonition (警示块) 样式 */
 
 .article-content .admonition {
   padding: 16px;
   margin: 16px 0;
   border-radius: 6px;
-  border-left: 5px solid; /* 边框颜色由 --admonition-color 变量决定 */
+  border-left: 5px solid;
 }
 
-/* 标题通用样式 */
 .article-content .admonition .admonition-title {
   font-weight: bold;
   margin-top: 0;
   margin-bottom: 8px;
   position: relative;
-  padding-left: 30px; /* 为图标留出空间 */
-  color: var(--admonition-color); /* 标题颜色由变量决定 */
+  padding-left: 30px;
+  color: var(--admonition-color);
 }
 
-/* 图标通用样式 */
 .article-content .admonition .admonition-title::before {
   position: absolute;
   left: 0;
@@ -1140,16 +1121,11 @@ body.night-mode .article-content table td {
   line-height: 1.25;
 }
 
-/* 提示内容段落 */
 .article-content .admonition p {
   margin-bottom: 0;
 }
 
-/* ---------------------------------
-   类型特定样式 (Colors & Icons)
-   --------------------------------- */
-
-/* --- 1. NOTE (注意) - 蓝色 --- */
+/* NOTE */
 .article-content .admonition.note {
   --admonition-color: #3b82f6; /* Blue */
   background-color: rgba(59, 130, 246, 0.1);
@@ -1158,7 +1134,7 @@ body.night-mode .article-content table td {
   content: "📝";
 }
 
-/* --- 2. TIP (提示) - 绿色 --- */
+/* TIP */
 .article-content .admonition.tip {
   --admonition-color: #10b981; /* Green */
   background-color: rgba(16, 185, 129, 0.1);
@@ -1167,39 +1143,38 @@ body.night-mode .article-content table td {
   content: "💡";
 }
 
-/* --- 3. IMPORTANT (重要) - 紫色 --- */
+/* IMPORTANT */
 .article-content .admonition.important {
-  --admonition-color: #8b5cf6; /* Purple/Violet */
+  --admonition-color: #8b5cf6;
   background-color: rgba(139, 92, 246, 0.1);
 }
 .article-content .admonition.important .admonition-title::before {
   content: "🔥";
 }
 
-/* --- 4. WARNING (警告) - 橙色 --- */
+/* WARNING */
 .article-content .admonition.warning {
-  --admonition-color: #f59e0b; /* Orange/Amber */
+  --admonition-color: #f59e0b;
   background-color: rgba(245, 158, 11, 0.1);
 }
 .article-content .admonition.warning .admonition-title::before {
   content: "⚠️";
 }
 
-/* --- 5. CAUTION (小心/危险) - 红色 --- */
+/* CAUTION */
 .article-content .admonition.caution {
-  --admonition-color: #ef4444; /* Red */
+  --admonition-color: #ef4444;
   background-color: rgba(239, 68, 68, 0.1);
 }
 .article-content .admonition.caution .admonition-title::before {
   content: "🛑";
 }
 
-/* --- 应用颜色变量到边框 --- */
 .article-content .admonition {
   border-color: var(--admonition-color);
 }
 
-/* 夜间模式适配 (让背景深一点，增强对比度) */
+/* 夜间模式 */
 body.night-mode .article-content .admonition.note {
   background-color: rgba(59, 130, 246, 0.2);
 }
@@ -1215,13 +1190,12 @@ body.night-mode .article-content .admonition.warning {
 body.night-mode .article-content .admonition.caution {
   background-color: rgba(239, 68, 68, 0.2);
 }
-/* === 优雅 ACG 风格复制按钮 === */
+/* 复制按钮 */
 pre.code-block-with-copy {
   position: relative;
   overflow: hidden;
 }
 
-/* 按钮主体：淡色半透明 + 细边 + 柔光 hover */
 .copy-code-btn {
   position: absolute;
   top: 6px;
@@ -1241,12 +1215,10 @@ pre.code-block-with-copy {
   opacity: 0;
 }
 
-/* 出现动画：只有鼠标在代码块上时淡入 */
 pre:hover .copy-code-btn {
   opacity: 1;
 }
 
-/* hover 时：轻微浮起 + 柔光描边 */
 .copy-code-btn:hover {
   transform: translateY(-1px);
   color: hsl(var(--hue, 207), 60%, 40%);
@@ -1254,14 +1226,13 @@ pre:hover .copy-code-btn {
   box-shadow: 0 0 8px hsla(var(--hue, 207), 83%, 60%, 0.25);
 }
 
-/* 复制成功：用绿色柔光反馈 */
 .copy-code-btn.copied {
   color: hsl(150, 60%, 35%);
   border-color: hsl(150, 60%, 50%);
   box-shadow: 0 0 10px hsla(150, 60%, 40%, 0.35);
 }
 
-/* 夜间模式：暗底半透明 + 清冷光感 */
+/* 夜间模式 */
 body.night-mode .copy-code-btn {
   background: rgba(255, 255, 255, 0.1);
   color: hsl(var(--hue, 207), 50%, 82%);
@@ -1296,6 +1267,7 @@ body.night-mode .copy-code-btn.copied {
   -webkit-box-shadow: inset 0 0 6px rgba(255, 143, 163, 0.3);
   background-color: var(--theme-color-lighter);
 }
+/* Markdown 内容样式END */
 /* 文章目录导航 */
 .toc-toggle-btn {
   position: fixed;
@@ -1449,3 +1421,120 @@ body.night-mode .copy-code-btn.copied {
   font-size: 12px;
   color: #888;
 }
+/* 文章目录导航 END */
+/* 响应式 */
+@media screen and (max-width: 900px) {
+  .header-nav .header-nav-container,
+  .main-content-wrapper {
+    width: 95%;
+    max-width: 100%;
+  }
+  .main-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .profile-card,
+  .categories-card {
+    margin-bottom: 1.5rem;
+    position: static;
+  }
+}
+@media screen and (max-width: 768px) {
+  /* 导航栏 */
+  .header-nav .header-nav-container {
+    padding: 0 0.5rem;
+    justify-content: space-between;
+  }
+  .header-nav .navTitle {
+    padding-left: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .header-nav .navTitle {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  /*隐藏链接*/
+  .header-nav .items {
+    display: none;
+  }
+  /*TODO:根据实际酌情调整*/
+  .nav-right-group {
+    margin-right: 0;
+    padding-right: 1rem;
+    gap: 1rem;
+  }
+  .search-box {
+    width: 120px;
+    margin-right: 0;
+  }
+  /* Banner */
+  .banner-container {
+    height: 40vh;
+    min-height: 250px;
+  }
+  .banner-container .banner-title {
+    font-size: 2rem;
+    padding: 0 1rem;
+    text-align: center;
+  }
+  /* 文章列表卡片 */
+  .article-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.2rem;
+  }
+  .article-title {
+    font-size: 1.5rem;
+  }
+  .card-arrow {
+    display: none;
+  }
+  .article-meta {
+    flex-wrap: wrap;
+  }
+  /* 文章内容页 */
+  .main-article-content {
+    padding: 1rem;
+  }
+  .main-article-content .article-content-title {
+    font-size: 1.6rem;
+  }
+  .toc-toggle-btn {
+    right: 20px;
+    bottom: 20px;
+    width: 45px;
+    height: 45px;
+  }
+  .toc-panel {
+    right: 20px;
+    bottom: 75px;
+    width: 80vw;
+    max-width: 300px;
+  }
+  .scroll-to-top-btn {
+    right: 20px;
+    bottom: 80px;
+  }
+}
+@media screen and (max-width: 480px) {
+  /*TODO:需要js进行点击后展开*/
+  .screen-box {
+    width: 30px;
+    background: transparent;
+  }
+  .search-input {
+    display: none;
+  }
+  .search-icon {
+    position: static;
+    transform: none;
+    color: var(--text-color);
+  }
+  .search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+/* 响应式END */
