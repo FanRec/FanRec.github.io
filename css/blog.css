@@ -498,6 +498,7 @@ main {
   z-index: 10;
   display: flex;
   justify-content: center;
+  transition: all 0.2s ease-in-out;
 }
 
 .main-content-wrapper {
@@ -1479,6 +1480,11 @@ body.night-mode .copy-code-btn.copied {
   }
 }
 @media screen and (max-width: 768px) {
+  .header-nav .header-nav-container,
+  .main-content-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
   /* 导航栏 */
   .header-nav .header-nav-container {
     padding: 0 0.5rem;
@@ -1497,7 +1503,6 @@ body.night-mode .copy-code-btn.copied {
   .header-nav .items {
     display: none;
   }
-  /*TODO:根据实际酌情调整*/
   .nav-right-group {
     margin-right: 0;
     padding-right: 1rem;
@@ -1519,6 +1524,10 @@ body.night-mode .copy-code-btn.copied {
   }
   main {
     --overlap-distance: -10px;
+  }
+  body.bg-mode-fullscreen main,
+  body.bg-mode-solid main {
+    --overlap-distance: calc(calc(var(--nav-height) + 30px) * -1);
   }
   .main-sidebar {
     display: none;
@@ -1548,6 +1557,9 @@ body.night-mode .copy-code-btn.copied {
   .main-article-content {
     padding: 1rem;
   }
+  .main-article-content .article-content {
+    padding: 1rem;
+  }
   .main-article-content .article-content-title {
     font-size: 1.6rem;
   }
@@ -1566,6 +1578,8 @@ body.night-mode .copy-code-btn.copied {
   .scroll-to-top-btn {
     right: 20px;
     bottom: 80px;
+    width: 45px;
+    height: 45px;
   }
 }
 @media screen and (max-width: 480px) {
