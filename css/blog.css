@@ -141,6 +141,10 @@ body.night-mode {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
+.nav-left-group {
+  display: flex;
+  align-items: center;
+}
 .header-nav .navTitle {
   padding-left: 2rem;
   transition: all 0.2s ease;
@@ -1452,6 +1456,127 @@ body.night-mode .copy-code-btn.copied {
   color: #888;
 }
 /* 文章目录导航 END */
+/* 汉堡菜单 */
+
+.hamburger-btn {
+  display: none;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  padding: 5px;
+  /* margin-right: 0px; */
+  border-radius: 4px;
+}
+
+.hamburger-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+
+.drawer-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background-color: var(--card-bg);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  z-index: 100000;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-drawer.active {
+  transform: translateX(0);
+}
+.drawer-header {
+  padding: 0.8rem 1.2rem;
+  background-color: var(--theme-color-light);
+  color: var(--text-color);
+  border-radius: 6px;
+}
+.drawer-header span {
+  color: #fff;
+  font-weight: 600;
+  font-family: "my-日系小熊可爱体";
+}
+body.night-mode .drawer-header {
+  background-color: var(--theme-color);
+}
+.drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.drawer-section {
+  padding: 0 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.drawer-section h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 0.8rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.drawer-item {
+  display: block;
+  padding: 0.8rem 0;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  transition: padding-left 0.2s;
+}
+
+.drawer-item:hover {
+  padding-left: 10px;
+  color: var(--theme-color);
+}
+
+.drawer-divider {
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 1rem 0;
+}
+.mobile-nav-links {
+  display: none;
+}
+@media screen and (max-width: 768px) {
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+/* 汉堡菜单END */
 /* 响应式 */
 @media screen and (max-width: 1200px) {
   .header-nav .header-nav-container,
@@ -1478,6 +1603,15 @@ body.night-mode .copy-code-btn.copied {
     margin-bottom: 1.5rem;
     position: static;
   }
+  .header-nav .navTitle {
+    padding-left: 1rem;
+    font-size: 0.9rem;
+  }
+  .header-nav .navTitle {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
 }
 @media screen and (max-width: 768px) {
   .header-nav .header-nav-container,
@@ -1490,18 +1624,13 @@ body.night-mode .copy-code-btn.copied {
     padding: 0 0.5rem;
     justify-content: space-between;
   }
-  .header-nav .navTitle {
-    padding-left: 0.5rem;
-    font-size: 0.9rem;
-  }
-  .header-nav .navTitle {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-  }
+
   /*隐藏链接*/
   .header-nav .items {
     display: none;
+  }
+  .mobile-nav-links {
+    display: block;
   }
   .nav-right-group {
     margin-right: 0;

@@ -22,7 +22,27 @@
     <link type="text/css" rel="stylesheet" href="../css/blog.css" />
     <script type="module" src="../js/blog.js"></script>
   </head>
+
   <body class="night-mode">
+    <div id="drawer-overlay" class="drawer-overlay"></div>
+    <aside id="sidebar-drawer" class="sidebar-drawer">
+      <div class="drawer-header"><span>冰窟 | My Profile</span></div>
+
+      <div class="drawer-content">
+        <div class="drawer-section mobile-nav-links">
+          <h4>导航</h4>
+          <nav>
+            <a href="./home.html" class="drawer-item">Home</a>
+            <a href="./album.html" class="drawer-item">Album</a>
+            <a href="./blog.html" class="drawer-item">Blog</a>
+          </nav>
+        </div>
+
+        <hr class="drawer-divider" />
+
+        <div class="drawer-section"></div>
+      </div>
+    </aside>
     <button class="scroll-to-top-btn" id="scroll-to-top-btn" title="回到顶部">
       <svg
         t="1762992449206"
@@ -44,8 +64,26 @@
     </button>
     <nav class="header-nav">
       <div class="header-nav-container">
-        <div id="navTitle" class="navTitle">
-          <strong>冰窟</strong>|MY PROFILE
+        <div class="nav-left-group">
+          <button id="hamburger-btn" class="hamburger-btn" aria-label="Menu">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div id="navTitle" class="navTitle">
+            <strong>冰窟</strong>|MY PROFILE
+          </div>
         </div>
         <div class="items">
           <a href="../html/home.html">Home</a>

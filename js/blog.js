@@ -10,6 +10,50 @@ import {
   createSvgIcon,
   formatPath,
 } from "./utils.js";
+function initDrawer() {
+  const navTitle = document.getElementById("navTitle");
+  const hamburgerBtn = document.getElementById("hamburger-btn");
+  const sidebarDrawer = document.getElementById("sidebar-drawer");
+  const drawerOverlay = document.getElementById("drawer-overlay");
+
+  function toggleDrawer() {
+    const isActive = sidebarDrawer.classList.contains("active");
+    if (isActive) {
+      sidebarDrawer.classList.remove("active");
+      drawerOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    } else {
+      sidebarDrawer.classList.add("active");
+      drawerOverlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  if (hamburgerBtn) {
+    hamburgerBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleDrawer();
+    });
+  }
+  if (navTitle) {
+    navTitle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleDrawer();
+    });
+  }
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener("click", () => {
+      toggleDrawer();
+    });
+  }
+
+  const drawerLinks = document.querySelectorAll(".drawer-item");
+  drawerLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      toggleDrawer();
+    });
+  });
+}
 function initSettingsToggle() {
   const toggles = [
     {
@@ -897,6 +941,7 @@ async function init() {
   articlesInit();
   initSettingsToggle();
   initTOC();
+  initDrawer();
 }
 document.addEventListener("DOMContentLoaded", () => {
   init();
