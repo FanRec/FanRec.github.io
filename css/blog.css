@@ -34,6 +34,9 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
+html {
+  overflow-x: hidden;
+}
 body {
   background-color: var(--main-bg, #f2f2f2);
   color: var(--text-color, #333);
@@ -502,13 +505,12 @@ main {
   width: 75%;
   max-width: 1300px;
   display: grid;
-  grid-template-columns: 270px 1fr;
+  grid-template-columns: 270px minmax(0, 1fr);
   gap: 2rem;
   padding-bottom: 5rem;
 }
 
 .main-sidebar {
-  /* 在小屏幕上，侧边栏会移到文章列表上方，不需要宽度限制 */
 }
 /* 侧边card */
 .profile-card {
@@ -882,7 +884,34 @@ main {
 .main-article-content .article-content {
   padding: 1.5rem;
 }
+.main-content-wrapper,
+.main-content-wrapper > * {
+  min-width: 0;
+  box-sizing: border-box;
+}
 
+.main-article-list,
+.main-article-content,
+.article-card,
+.article-content,
+.article-content img,
+.article-content table,
+.hljs,
+pre,
+code {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.article-content table,
+.hljs,
+pre {
+  width: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+}
 /* 背景图模式 */
 body.bg-mode-banner {
   background-image: none;
@@ -1423,6 +1452,16 @@ body.night-mode .copy-code-btn.copied {
 }
 /* 文章目录导航 END */
 /* 响应式 */
+@media screen and (max-width: 1200px) {
+  .header-nav .header-nav-container,
+  .main-content-wrapper {
+    width: 90%;
+    max-width: 100%;
+  }
+  .main-content-wrapper {
+    gap: 1.5rem;
+  }
+}
 @media screen and (max-width: 900px) {
   .header-nav .header-nav-container,
   .main-content-wrapper {
@@ -1430,7 +1469,7 @@ body.night-mode .copy-code-btn.copied {
     max-width: 100%;
   }
   .main-content-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
   }
   .profile-card,
@@ -1466,23 +1505,35 @@ body.night-mode .copy-code-btn.copied {
   }
   .search-box {
     width: 120px;
-    margin-right: 0;
+    margin-right: 0.3rem;
   }
   /* Banner */
   .banner-container {
     height: 40vh;
-    min-height: 250px;
+    /* min-height: 250px; */
   }
   .banner-container .banner-title {
     font-size: 2rem;
     padding: 0 1rem;
     text-align: center;
   }
+  main {
+    --overlap-distance: -10px;
+  }
+  .main-sidebar {
+    display: none;
+  }
   /* 文章列表卡片 */
   .article-card {
     flex-direction: column;
     align-items: flex-start;
-    padding: 1.2rem;
+    padding: 1.2rem 0.8rem 1.2rem 1.8rem;
+  }
+  .article-title::after {
+    content: "";
+    position: absolute;
+    width: 3.5px;
+    height: 30px;
   }
   .article-title {
     font-size: 1.5rem;
