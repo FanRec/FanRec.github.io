@@ -1624,7 +1624,9 @@ body.night-mode .drawer-header {
     padding: 0 0.5rem;
     justify-content: space-between;
   }
-
+  .header-nav .navTitle span {
+    display: none;
+  }
   /*隐藏链接*/
   .header-nav .items {
     display: none;

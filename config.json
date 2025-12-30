@@ -73,6 +73,7 @@
     "titleEng": "MY PROFILE",
     "icon": "/favicon.ico",
     "pageHead": {
+      "bgImage": "https://t.alcy.cc/fj",
       "content": ["小纪の博客"],
       "random": false,
       "typed": false

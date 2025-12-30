@@ -892,6 +892,7 @@ async function loadConfig() {
   const profileCardDesc = document.querySelector(
     ".profile-card .card-description"
   );
+  const drawerHeader = document.querySelector(".drawer-header");
 
   try {
     const ConfigPath = "../config.json";
@@ -905,21 +906,33 @@ async function loadConfig() {
     if (pageIcon && config.blog?.icon) {
       pageIcon.href = `${formatPath(config.blog.icon)}?v=1`;
     }
-    if (navTitle && config.blog?.titleEng)
-      navTitle.innerHTML = `<strong>${config.title}</strong>|${config.blog.titleEng}`;
-    if (bannerTitle && config.blog?.pageHead?.content) {
+    if (config.title && config.blog?.titleEng) {
+      if (navTitle)
+        navTitle.innerHTML = `<strong>${config.title}</strong><span>|${config.blog.titleEng}</span>`;
+      if (drawerHeader)
+        drawerHeader.inner = `<strong>${config.title}</strong><span>|${config.blog.titleEng}</span>`;
+    }
+
+    if (config.blog?.pageHead) {
       const pageHead = config.blog.pageHead;
       let content = "";
       if (pageHead.random) {
         //TODO:写完
       } else {
-        content = pageHead.content[0];
+        if (pageHead.content && pageHead.content.length > 0)
+          content = pageHead.content[0];
       }
       if (pageHead.typed) {
         //TODO:写完
       }
-      bannerTitle.innerHTML = content;
+      if (bannerTitle) bannerTitle.innerHTML = content;
+      const bannerImageUrl = pageHead.bgImage
+        ? `url("${formatPath(pageHead.bgImage)}")`
+        : `url("https://imgapi.xl0408.top/index.php")`;
+      const root = document.documentElement;
+      if (root) root.style.setProperty("--banner-image-url", bannerImageUrl);
     }
+
     if (profileCardAvatar && config.masterInfo?.avatar) {
       profileCardAvatar.style.backgroundImage = `url(${formatPath(
         config.masterInfo.avatar

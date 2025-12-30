@@ -803,3 +803,220 @@ body {
   font-weight: 800;
   font-family: "my-pixel";
 }
+/* =========================================
+   响应式适配补丁 (Responsive Patch)
+   请将此段代码粘贴到 home.css 的最末尾
+   ========================================= */
+
+/* 1. 全局图片自适应，防止图片撑破屏幕 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 2. 平板和窄屏电脑适配 (小于 1024px) */
+@media (max-width: 1024px) {
+  .navigation .left,
+  .navigation .right {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  /* 允许头部高度自动延伸，防止内容被截断 */
+  .home-header {
+    height: auto;
+    min-height: 100vh;
+    padding-top: 80px;
+    padding-bottom: 50px;
+  }
+}
+
+/* 3. 手机端适配 (小于 768px) */
+@media (max-width: 768px) {
+  /* --- 导航栏：隐藏文字，只留图标 --- */
+  .navigation .right {
+    gap: 0.8rem;
+  }
+  .navigation .right a {
+    font-size: 0; /* 隐藏文字 */
+  }
+  .navigation .right a .icon {
+    margin-right: 0;
+    width: 24px;
+    height: 24px;
+  }
+  /* 调整鼠标悬停时的下划线位置 */
+  .navigation .right a::before {
+    top: calc(var(--nav-height) / 2 + 12px);
+  }
+
+  /* --- 首页头部 (Header)：解决重叠与拥挤 --- */
+  .home-header {
+    flex-direction: column;
+    text-align: center;
+    justify-content: flex-start; /* 从上往下排，不要挤在中间 */
+    height: auto;
+    min-height: 100vh; /* 保证至少占满一屏 */
+
+    /* 关键：使用 vh (视口高度) 控制间距 */
+    /* 屏幕越高，上下留白越多，解决"太集中"的问题 */
+    padding: 80px 1.5rem 5vh 1.5rem;
+    gap: 4vh;
+  }
+
+  .home-header .left .avatar-container {
+    width: 220px;
+    height: 220px;
+    margin-top: 2vh;
+  }
+
+  .home-header .right {
+    flex: auto;
+    width: 100%;
+    min-width: auto; /* 取消原本的最小宽度限制 */
+    max-width: 100%;
+    align-items: center;
+    gap: 5vh; /* 拉开 文字区 和 按钮区 的距离 */
+  }
+
+  .home-header .titles {
+    gap: 1.5rem;
+  }
+
+  .home-header .titles h1 {
+    font-size: 2.2rem;
+    flex-direction: column; /* 让名字竖着排 */
+    gap: 1rem;
+  }
+
+  /* --- 名字部分重写：彻底解决文字重叠 --- */
+  .home-header .titles .first-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: static; /* 取消相对定位 */
+    margin-top: 0.5rem;
+  }
+
+  .home-header .titles .english-name,
+  .home-header .titles .chinese-name {
+    position: static; /* 取消绝对定位，让它们自然堆叠 */
+    transform: none; /* 取消位移 */
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--pink);
+    letter-spacing: 0.2rem;
+    margin-bottom: 0.2rem; /* 给名字之间加点小空隙 */
+  }
+
+  /* 原本的大字日文名 */
+  .home-header .titles #name-ja {
+    order: 3; /* 确保日文名排在最后（如果需要的话） */
+    margin-top: 0.5rem;
+  }
+
+  .home-header .titles h2 {
+    font-size: 1.1rem;
+    margin-top: 1vh;
+  }
+
+  .home-header .home-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    padding-bottom: 5vh;
+  }
+
+  /* --- 关于我 (About Me) --- */
+  .home-aboutMe > h1 {
+    font-size: 2.2rem;
+  }
+
+  .aboutme-wrapper {
+    flex-direction: column;
+    margin-left: 0;
+    gap: 2rem;
+  }
+
+  /* 手机端隐藏左侧立绘，把空间留给文字 */
+  .aboutme-wrapper .left {
+    display: none;
+  }
+
+  .aboutme-wrapper .right {
+    padding: 0 1.5rem;
+  }
+
+  .aboutme-wrapper .about-container {
+    margin: 0;
+    width: 100%;
+    padding: 0 15px;
+  }
+
+  .aboutme-wrapper .about-container::before {
+    width: 110%;
+    height: 110%;
+  }
+
+  /* --- 作品集 (Works) --- */
+  .home-work .works-wrapper {
+    padding: 0 1.5rem;
+  }
+
+  .works-wrapper .cards-container {
+    gap: 2rem;
+  }
+
+  .works-wrapper .work-card {
+    width: 100%; /* 卡片占满宽度 */
+    height: 200px;
+  }
+
+  .works-wrapper .work-card .texts h1 {
+    font-size: 1.5rem;
+  }
+
+  /* --- 技术栈 (Tech Stack) --- */
+  .home-tech-stack .tech-stack-wrapper {
+    padding: 20px 10px;
+    gap: 1.5rem;
+  }
+
+  .home-tech-stack .tech-stack {
+    font-size: 1.2rem;
+  }
+
+  /* --- 友链 (Friends) --- */
+  .home-friends-link .friends-wrapper {
+    padding: 20px 15px;
+  }
+
+  .home-friends-link .friend-card {
+    width: 100%;
+    padding: 10px 15px;
+  }
+
+  /* --- 联系方式 (Touch Me) --- */
+  .home-getTorch .getTouch-links-wrapper {
+    margin: 0 1.5rem;
+    justify-content: center;
+    column-gap: 1rem;
+    row-gap: 1.5rem;
+  }
+
+  .getTouch-links-wrapper .link-card {
+    width: 25%; /* 一行两个 */
+    height: 110px;
+  }
+}
+
+/* 4. 针对超小屏幕 (如 iPhone SE 第一代) */
+@media (max-width: 380px) {
+  .home-header .titles h1 {
+    font-size: 1.8rem;
+  }
+  .getTouch-links-wrapper .link-card {
+    width: 100%; /* 一行一个 */
+  }
+}
