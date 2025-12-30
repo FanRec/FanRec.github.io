@@ -752,8 +752,8 @@ body {
 @media (max-width: 1280px) {
   .navigation .left,
   .navigation .right {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-left: 0.6rem;
+    margin-right: 0.8rem;
   }
 
   .home-header {
@@ -813,6 +813,12 @@ body {
   }
 }
 @media (max-width: 768px) {
+  .navigation .left,
+  .navigation .right {
+    margin-left: 0.1rem;
+    margin-right: 0.8rem;
+  }
+
   .navigation .right {
     gap: 1rem;
   }
